@@ -1,0 +1,2152 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>grind3 winter manual</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: a calm, dense engineering field manual read at night on a phone.
+   IDEA: a lab notebook's index page plus a time-budget plate.
+   PICTURE: the hours plate, theory vs build per track, against the month you have.
+   COLOUR and TYPE: near-black sea ground in both themes, sky ink, pink as the warning accent. Hanken Grotesk, JetBrains Mono for code.
+   LAYOUT: index view (plate, cards, overview), one view per track with collapsible numbered sections. */
+:root{color-scheme:dark;--bg:#05080d;--bg2:#0b1119;--bg3:#111a26;--line:#1d2a3a;--ink:#e3eaf2;--mute:#8a9bb0;--sky:#8fd3ff;--pink:#ff5c8a;--mint:#7fe0b8}
+:root[data-theme=light],:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{scroll-padding-top:72px;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Hanken Grotesk",system-ui,sans-serif;overflow-x:clip}
+a{color:var(--sky)}
+.band{padding:clamp(20px,4vw,48px) max(5vw,16px);max-width:1240px;margin:0 auto}
+header.top{border-bottom:1px solid var(--line);background:rgba(5,8,13,.92);backdrop-filter:blur(8px)}
+@media(min-width:900px){header.top{position:sticky;top:0;z-index:5}}
+.topin{max-width:1240px;margin:0 auto;padding:10px max(5vw,16px);display:flex;gap:14px;align-items:center}
+.brand{font-weight:700;color:var(--ink);text-decoration:none;flex:none;font-size:18px}
+.scroll{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}.scroll::-webkit-scrollbar{display:none}
+.scroll a{flex:none;color:var(--mute);text-decoration:none;padding:10px 12px;border-radius:8px;font-size:15px;min-height:44px;display:flex;align-items:center}
+.scroll a:hover,.scroll a.on{color:var(--ink);background:var(--bg3)}
+h1,.pt{font-weight:300;font-size:clamp(34px,6vw,52px);line-height:1.05;margin:0 0 12px;text-wrap:balance;letter-spacing:-.01em}
+.sub{color:var(--mute);font-size:17px;max-width:68ch;margin:0}
+.plate{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:clamp(16px,3vw,28px);margin-top:24px}
+.kpis{display:flex;flex-wrap:wrap;gap:12px 36px;margin-bottom:20px}
+.kpi b{display:block;font-weight:300;font-size:clamp(32px,6vw,48px);line-height:1;white-space:nowrap}
+.kpi span{color:var(--mute);font-size:14px}
+.kpi.warn b{color:var(--pink)}
+.row{display:grid;grid-template-columns:minmax(0,150px) minmax(0,1fr) 84px;gap:12px;align-items:center;padding:9px 0;text-decoration:none;color:var(--ink);border-top:1px solid var(--line)}
+.row:hover .rn{color:var(--sky)}
+.rn{font-size:15px}.rv{text-align:right;font-variant-numeric:tabular-nums;color:var(--mute);font-size:14px;white-space:nowrap}
+.track{position:relative;height:18px;display:flex;background:var(--bg);border-radius:4px}
+.bt{background:#2f4a66;border-radius:4px 0 0 4px}.bb{background:var(--sky);border-radius:0 4px 4px 0}.bb.stretch{background:#4f7fa3}
+.legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:14px;color:var(--mute);font-size:13px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:14px}
+.card{display:flex;flex-direction:column;gap:8px;padding:18px;background:var(--bg2);border:1px solid var(--line);border-radius:14px;text-decoration:none;color:var(--ink);transition:border-color .2s,transform .2s}
+.card:hover{border-color:var(--sky);transform:translateY(-2px)}
+.card strong{font-size:21px;font-weight:600}.cd{color:var(--mute);font-size:15px;flex:1}
+.meta{font-size:13px;color:var(--mute)}
+.tier{align-self:flex-start;font-size:13px;padding:2px 10px;border-radius:99px;background:rgba(143,211,255,.12);color:var(--sky)}
+.stretch .tier{background:rgba(255,92,138,.12);color:var(--pink)}
+h3.sh{font-size:22px;font-weight:600;margin:8px 0 14px}
+.back{display:inline-flex;min-height:44px;align-items:center;text-decoration:none;color:var(--mute);font-size:15px}
+.lead{color:#c3cfdc;max-width:75ch}
+.lead blockquote,.sb blockquote{margin:14px 0;padding:12px 16px;border-left:3px solid var(--sky);background:var(--bg2);border-radius:0 10px 10px 0}
+.lead blockquote p,.sb blockquote p{margin:6px 0}
+.tools{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.q{flex:1 1 220px;font:inherit;font-size:16px;color:var(--ink);background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;min-height:44px}
+button{font:inherit;font-size:15px;color:var(--ink);background:var(--bg3);border:1px solid var(--line);border-radius:10px;padding:8px 14px;min-height:44px;cursor:pointer}
+button:hover{border-color:var(--sky)}
+:focus-visible{outline:2px solid var(--sky);outline-offset:2px}
+.secs{padding-top:0}
+details.sec{border:1px solid var(--line);border-radius:14px;background:var(--bg2);margin-bottom:10px;overflow:hidden}
+details.sec>summary{list-style:none;cursor:pointer;display:flex;gap:14px;align-items:center;padding:14px 18px;min-height:56px}
+details.sec>summary::-webkit-details-marker{display:none}
+details.sec>summary::after{content:"+";margin-left:auto;color:var(--mute);font-size:22px;flex:none}
+details.sec[open]>summary::after{content:"–"}
+details.sec[open]>summary{border-bottom:1px solid var(--line);background:var(--bg3)}
+.n{flex:none;width:30px;height:30px;border-radius:8px;display:grid;place-items:center;background:var(--bg);color:var(--sky);font-size:14px;font-weight:600}
+.h{font-size:18px;font-weight:600;line-height:1.3}
+.sb{padding:4px 18px 18px;max-width:100%}
+.sb p,.sb li{max-width:75ch}
+.sb h3{font-size:17px;color:var(--sky);margin:24px 0 8px}
+.sb li{margin:4px 0}.sb li::marker{color:var(--mute)}
+strong{color:#fff;font-weight:600}
+code{font:14px/1.5 "JetBrains Mono",ui-monospace,monospace;background:var(--bg);border:1px solid var(--line);padding:1px 5px;border-radius:5px;overflow-wrap:anywhere}
+.code{position:relative;margin:14px 0}
+pre{overflow-x:auto;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:16px;margin:0}
+pre code{border:0;padding:0;background:none;overflow-wrap:normal;font-size:13px}
+.cp{position:absolute;top:6px;right:6px;min-height:32px;padding:4px 10px;font-size:13px}
+.tw{overflow-x:auto;margin:14px 0}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th{text-align:left;color:var(--mute);font-weight:600;border-bottom:1px solid var(--line);padding:8px 10px;white-space:nowrap}
+td{border-bottom:1px solid var(--line);padding:8px 10px;vertical-align:top}
+tr:hover td{background:rgba(143,211,255,.03)}
+mark{background:rgba(255,92,138,.3);color:#fff;border-radius:3px}
+.none{color:var(--mute);padding:12px 0}
+footer{color:var(--mute);font-size:13px;text-align:center;padding:32px 16px}
+@media(max-width:600px){
+ .row{grid-template-columns:minmax(0,1fr) 72px;gap:4px 10px}.track{grid-column:1/-1;order:3}
+ table{font-size:14px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}
+ .stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:7.5em;text-align:start}
+ .stack td::before{content:attr(data-l);float:inline-start;width:7em;margin-inline-start:-7.5em;white-space:normal;color:var(--mute);font-size:13px}
+ .stack td:empty{display:none}.sb{padding:4px 14px 14px}details.sec>summary{padding:12px 14px}
+}
+@media(prefers-reduced-motion:reduce){.card{transition:none}.card:hover{transform:none}}
+</style></head><body>
+<header class="top"><div class="topin"><a class="brand" href="#home">grind3</a><nav class="scroll"><a href="#order-book">Order book</a>
+<a href="#itch-fpga">ITCH on FPGA</a>
+<a href="#chess-engine">Chess engine</a>
+<a href="#codeforces-dsa">Codeforces / DSA</a>
+<a href="#vector-db">Vector database</a>
+<a href="#neural-accelerator">Neural accelerator</a>
+<a href="#compiler">Compiler</a></nav></div></header>
+<main>
+<section class="view" id="v-home">
+ <div class="band">
+  <h1>Winter break 2026: the theory manual</h1>
+  <p class="sub">Seven tracks, about 30 days. Everything to know before writing code: concepts, design trade-offs, interview questions and exact resources.</p>
+  <div class="plate">
+   <div class="kpis">
+    <div class="kpi warn"><b>330–420 h</b><span>to finish all seven well</span></div>
+    <div class="kpi"><b>250–300 h</b><span>a focused month gives you</span></div>
+    <div class="kpi"><b>4 core + 1</b><span>recommended scope</span></div>
+   </div>
+   <a class="row" href="#order-book"><span class="rn">Order book</span><span class="track"><span class="bt" style="width:10.0%"></span><span class="bb core" style="width:50.0%"></span></span><span class="rv">37–47 h</span></a>
+<a class="row" href="#itch-fpga"><span class="rn">ITCH on FPGA</span><span class="track"><span class="bt" style="width:15.7%"></span><span class="bb core" style="width:64.3%"></span></span><span class="rv">51–61 h</span></a>
+<a class="row" href="#chess-engine"><span class="rn">Chess engine</span><span class="track"><span class="bt" style="width:12.9%"></span><span class="bb core" style="width:71.4%"></span></span><span class="rv">49–69 h</span></a>
+<a class="row" href="#codeforces-dsa"><span class="rn">Codeforces / DSA</span><span class="track"><span class="bt" style="width:0.0%"></span><span class="bb core" style="width:71.4%"></span></span><span class="rv">45–55 h</span></a>
+<a class="row" href="#vector-db"><span class="rn">Vector database</span><span class="track"><span class="bt" style="width:10.0%"></span><span class="bb stretch" style="width:50.0%"></span></span><span class="rv">37–47 h</span></a>
+<a class="row" href="#neural-accelerator"><span class="rn">Neural accelerator</span><span class="track"><span class="bt" style="width:12.9%"></span><span class="bb stretch" style="width:64.3%"></span></span><span class="rv">49–59 h</span></a>
+<a class="row" href="#compiler"><span class="rn">Compiler</span><span class="track"><span class="bt" style="width:12.9%"></span><span class="bb stretch" style="width:71.4%"></span></span><span class="rv">49–69 h</span></a>
+   <div class="legend"><span><i style="background:#2f4a66"></i>Theory</span><span><i style="background:var(--sky)"></i>Build (core)</span><span><i style="background:#4f7fa3"></i>Build (stretch)</span></div>
+  </div>
+ </div>
+ <div class="band" style="padding-top:0"><h3 class="sh">Tracks</h3><div class="cards"><a class="card core" href="#order-book"><span class="tier">Core</span><strong>Order book</strong><span class="cd">Price-time matching engine plus a NASDAQ book rebuilt from real ITCH data, benchmarked to the nanosecond.</span><span class="meta">C++ · 37–47 h · 9 sections</span></a>
+<a class="card core" href="#itch-fpga"><span class="tier">Core</span><strong>ITCH on FPGA</strong><span class="cd">SystemVerilog decoder for ITCH 5.0 and MoldUDP64 on a 64-bit stream, checked against the C++ parser.</span><span class="meta">SystemVerilog · 51–61 h · 8 sections</span></a>
+<a class="card core" href="#chess-engine"><span class="tier">Core</span><strong>Chess engine</strong><span class="cd">From zero: bitboards, perft-verified move generation, alpha-beta search, then NNUE and AlphaZero ideas.</span><span class="meta">C++ + PyGame · 49–69 h · 11 sections</span></a>
+<a class="card core" href="#codeforces-dsa"><span class="tier">Core</span><strong>Codeforces / DSA</strong><span class="cd">Daily routine and topic ladder from 1330 to 1600+, plus the interview patterns contests skip.</span><span class="meta">C++ · 45–55 h · 7 sections</span></a>
+<a class="card stretch" href="#vector-db"><span class="tier">Stretch</span><strong>Vector database</strong><span class="cd">HNSW, IVF-PQ, SIMD distances, WAL persistence and filtering, benchmarked on SIFT1M against hnswlib.</span><span class="meta">C++ / Rust · 37–47 h · 8 sections</span></a>
+<a class="card stretch" href="#neural-accelerator"><span class="tier">Stretch</span><strong>Neural accelerator</strong><span class="cd">Seven options for one NPU block. The pick: an int8 systolic array, bit-exact against PyTorch.</span><span class="meta">SystemVerilog + Python · 49–59 h · 9 sections</span></a>
+<a class="card stretch" href="#compiler"><span class="tier">Stretch</span><strong>Compiler</strong><span class="cd">Four flavours, from bytecode VM to C-to-ARM64 to an ML compiler that could target your accelerator.</span><span class="meta">C / C++ / Python · 49–69 h · 11 sections</span></a></div></div>
+ <div class="band" style="padding-top:0"><h3 class="sh">Plan, C++ ramp-up and how interviews have changed</h3><div class="lead"><p>Seven tracks, one per folder. Each folder has a <code>theory.md</code> that covers what to learn <strong>before</strong> you code: concepts, design decisions, interview questions (classic and AI-era), and specific resources (with the exact chapters/sections to read).</p>
+<div class="tw"><table class="stack">
+<thead>
+<tr>
+<th>#</th>
+<th>Folder</th>
+<th>Project</th>
+<th>Main language</th>
+<th>Story it tells a recruiter</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>vector_db/</code></td>
+<td>Vector database (HNSW + IVF-PQ + persistence)</td>
+<td>C++ (or Rust)</td>
+<td>"I understand the infra under RAG / LLM apps"</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>order_book/</code></td>
+<td>Limit order book + matching engine</td>
+<td>C++</td>
+<td>"I write low-latency systems code" (HFT/quant)</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>itch_fpga/</code></td>
+<td>NASDAQ ITCH 5.0 parser on FPGA</td>
+<td>SystemVerilog</td>
+<td>"I do hardware for trading" (FPGA/HFT)</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>compiler/</code></td>
+<td>Your own compiler</td>
+<td>C / C++ / Python</td>
+<td>"I understand languages, IR, codegen" (ML compilers too)</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>neural_accelerator/</code></td>
+<td>One piece of an NPU (options inside)</td>
+<td>SystemVerilog + Python</td>
+<td>"I understand AI hardware" (NVIDIA/Qualcomm/AMD/startups)</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>chess_engine/</code></td>
+<td>Finish the chess engine (from zero theory)</td>
+<td>C++ engine + your PyGame UI</td>
+<td>Search, game trees, NNUE / AlphaZero</td>
+</tr>
+<tr>
+<td>7</td>
+<td><code>codeforces_dsa/</code></td>
+<td>1330 → 1600+ and interview DSA</td>
+<td>C++</td>
+<td>Clears the OA, which is the first filter for every company</td>
+</tr>
+</tbody>
+</table></div>
+
+</div><div style="margin-top:14px"><details class="sec" id="home-s0"><summary><span class="n">1</span><span class="h">Be honest about the time budget</span></summary><div class="sb">
+<p>You have about 30 days, call it 8–10 focused hours a day, so 250–300 hours. Rough honest estimates for a version you'd be proud to put on a resume:</p>
+<div class="tw"><table class="stack">
+<thead>
+<tr>
+<th>Project</th>
+<th>Theory</th>
+<th>Build (resume-grade v1)</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Codeforces/DSA</td>
+<td>ongoing</td>
+<td><strong>1.5–2 h every day</strong> (≈50 h)</td>
+<td>Never skip. This is what gets you through the OA.</td>
+</tr>
+<tr>
+<td>Order book</td>
+<td>6–8 h</td>
+<td>30–40 h</td>
+<td>Also your C++ ramp-up</td>
+</tr>
+<tr>
+<td>ITCH on FPGA</td>
+<td>10–12 h (Verilog basics included)</td>
+<td>40–50 h</td>
+<td>Reuses the order book. Same HFT story.</td>
+</tr>
+<tr>
+<td>Chess engine</td>
+<td>8–10 h</td>
+<td>40–60 h</td>
+<td>Perft-correct move generation is the hard 50%</td>
+</tr>
+<tr>
+<td>Vector DB</td>
+<td>6–8 h</td>
+<td>30–40 h</td>
+<td></td>
+</tr>
+<tr>
+<td>Compiler</td>
+<td>8–10 h</td>
+<td>40–60 h</td>
+<td></td>
+</tr>
+<tr>
+<td>Neural accelerator</td>
+<td>8–10 h</td>
+<td>40–50 h</td>
+<td>Shares the Verilog ramp with ITCH</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Total ≈ 330–420 h. That is more than one month.</strong> My recommendation:</p>
+<ul>
+<li><strong>Core (finish these properly):</strong> Codeforces daily, then <strong>Order book → ITCH FPGA</strong> (one HFT story: hardware feed parser drives a software book), then the <strong>Chess engine</strong> (already started; it's your most fun one).</li>
+<li><strong>Stretch (pick 1, maybe 2):</strong> Vector DB (best fit for AI/ML roles) <em>or</em> the Neural accelerator (best fit for hardware/AI-chip roles). The compiler can roll into next semester, or merge it with the accelerator: a tiny compiler that lowers a model onto your accelerator is a killer combined project.</li>
+</ul>
+<p>Two finished, benchmarked, well-written-up projects beat seven 60%-done repos. Interviewers ask "what was the hardest bug / what did you measure?", and you only have good answers for finished work.</p>
+<h3>Suggested order (adjust freely)</h3>
+<div class="code"><button class="cp" type="button">Copy</button><pre><code>Every day:   1.5–2h Codeforces (see codeforces_dsa/theory.md for the routine)
+
+Days 1–2    C++ ramp (below) + order_book theory
+Days 3–8    Order book: correct → benchmarked → optimized → ITCH file replay
+Days 9–10   Verilog/FPGA ramp (in itch_fpga/theory.md §2)
+Days 11–17  ITCH parser in RTL, verified against your C++ parser (golden model)
+Days 18–26  Chess engine: board → perft → search → eval → UCI → (NNUE stretch)
+Days 27–30  Stretch project v0 (vector DB or accelerator) + READMEs, blog posts, resume lines
+</code></pre></div>
+
+</div></details>
+<details class="sec" id="home-s1"><summary><span class="n">2</span><span class="h">Shared prerequisite: C++ ramp (you know Python/JS)</span></summary><div class="sb">
+<p>Four of the seven projects want C++. Do this in ~1.5 days, not more. Learn the rest while building.</p>
+<p><strong>learncpp.com, these chapters only:</strong> 1–5 (basics, skim), 9 (references/pointers), 12 (compound types, references), 13–14 (enums, structs, classes), 15 (more classes), 16–17 (<code>std::vector</code>, <code>std::array</code>), 19 (dynamic allocation), 22 (move semantics and smart pointers), 26 (templates, skim). Chapter numbers shift a bit between site revisions. Go by topic names.</p>
+<p>Must-know list:</p>
+<ul>
+<li>Stack vs heap, RAII, <code>unique_ptr</code>, and why the hot path should <strong>never</strong> call <code>new</code></li>
+<li>References vs pointers, <code>const</code> correctness, pass-by-reference for big objects</li>
+<li>Move semantics (<code>std::move</code>, rvalue references) at the level of "when does a copy happen?"</li>
+<li>STL: <code>vector</code>, <code>array</code>, <code>unordered_map</code>, <code>map</code>, <code>deque</code>, <code>priority_queue</code>, and their complexity and <strong>memory layout</strong> (contiguous vs node-based)</li>
+<li>Undefined behaviour: out-of-bounds, signed overflow, use-after-free. Always build debug with <code>-fsanitize=address,undefined</code>.</li>
+<li>Build tooling: <strong>CMake</strong> (one <code>CMakeLists.txt</code> per project), <code>-O2/-O3 -march=native</code>, a debugger (<code>lldb</code> on Mac)</li>
+<li>Testing: GoogleTest or Catch2. Benchmarks: Google Benchmark.</li>
+</ul>
+<p><strong>Mac M2 notes:</strong> Apple clang is fine. <code>perf</code> doesn't exist on macOS. Use Instruments (Time Profiler, counters) or <code>samply</code>. For Linux-only stuff (HFT kernel tricks, Verilator speed), use a Linux VM/Docker or an IITG lab machine. Your CPU is ARM64 (cache line is <strong>128 B on Apple M-series</strong>, vs 64 B on x86). That matters for false-sharing padding, so mention it in interviews.</p>
+
+</div></details>
+<details class="sec" id="home-s2"><summary><span class="n">3</span><span class="h">How interviews have changed in the AI era (applies to every folder)</span></summary><div class="sb">
+<ol>
+<li><strong>The OA is still the gate, but more of it is proctored.</strong> Codeforces-style OAs (HackerRank, HackerEarth, Codility) now have webcam and screen monitoring and plagiarism/AI-similarity checks. Many firms (especially quant/HFT in India: Graviton, Quadeye, Tower, Optiver, APT, NK Securities, AlphaGrep, etc.) moved more rounds back to live or in-person interviews. Raw DSA ability matters <em>more</em> now, not less.</li>
+<li><strong>"Walk me through your project" got harder.</strong> Interviewers assume any repo could be AI-generated, so they probe: <em>why</em> this data structure, what you measured, what broke, what you'd change, what the alternative was. Every theory.md has a "defend your design" list. Make sure you can answer it without notes.</li>
+<li><strong>Code-reading and debugging rounds.</strong> You're given AI-written or buggy code and asked to find the bug, the performance problem or the race. Projects where <em>you</em> hit the bugs (perft mismatches, CDC glitches, use-after-free in a pool allocator) are your training data.</li>
+<li><strong>Using AI is allowed in some rounds.</strong> Some companies now run "AI-assisted" rounds where you can use Copilot/Claude, and they grade how well you specify, verify and test. The skill is: write the spec and tests yourself, let AI draft, verify with a golden model. That is exactly the workflow in these projects (C++ model ↔ RTL, python-chess ↔ your perft, FAISS ↔ your recall).</li>
+<li><strong>Numbers beat adjectives.</strong> "p99 add-order latency 85 ns", "recall@10 = 0.95 at 12k QPS on SIFT1M", "perft(6) correct, 1.2 M nps", "parses one ITCH message per cycle at 250 MHz". Every theory.md ends with the metrics you should report.</li>
+</ol>
+<p><strong>My role when you build:</strong> you write the core logic. I'll explain, review, write test harnesses and golden models, help debug, and pair-program when you're stuck. For learning projects, the bugs you fix yourself are the point.</p></div></details></div></div>
+</section>
+<section class="view" id="v-order-book" hidden><div class="band phead"><a class="back" href="#home">← All tracks</a><h2 class="pt">Limit Order Book (LOB) + Matching Engine</h2><div class="lead"><blockquote>
+<p>Goal: a C++ limit order book that (a) matches orders like an exchange and (b) rebuilds the real NASDAQ book from an ITCH 5.0 file. It should be benchmarked with latency percentiles. This is the software half of your HFT story. <code>itch_fpga/</code> is the hardware half.</p>
+</blockquote>
+
+</div><div class="tools"><input type="search" class="q" placeholder="Search this track" aria-label="Search Order book"><button type="button" class="ex">Expand all</button></div></div><div class="band secs"><details class="sec" id="order-book-s0"><summary><span class="n">1</span><span class="h">Why this project matters</span></summary><div class="sb">
+<ul>
+<li>It's the <strong>#1 most common systems-design question at HFT/quant firms</strong>: "Design an order book. What data structures? What's the complexity of add/cancel/execute? How do you make it fast?"</li>
+<li>It forces you to learn the things those firms test: cache behaviour, memory allocation, branch prediction, data layout, latency measurement.</li>
+<li>It's AI-proof in interviews. The follow-ups are about <em>measured</em> trade-offs, which you only know if you built and profiled it.</li>
+</ul>
+
+</div></details>
+<details class="sec" id="order-book-s1"><summary><span class="n">2</span><span class="h">Market microstructure (what the book represents)</span></summary><div class="sb">
+<p><strong>Read first:</strong> Larry Harris, <em>Trading and Exchanges</em>, Ch. 1–6 (orders, market structure, order-driven markets). If short on time: Ch. 4 (orders and order properties) and Ch. 6 (order-driven markets).</p>
+<div class="tw"><table class="stack">
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Bid / Ask (offer)</strong></td>
+<td>Buy orders / sell orders resting in the book</td>
+</tr>
+<tr>
+<td><strong>Best bid / best ask (BBO, top of book)</strong></td>
+<td>Highest bid price, lowest ask price</td>
+</tr>
+<tr>
+<td><strong>Spread</strong></td>
+<td>best ask − best bid</td>
+</tr>
+<tr>
+<td><strong>Mid price</strong></td>
+<td>(best bid + best ask)/2. Microprice = size-weighted variant.</td>
+</tr>
+<tr>
+<td><strong>Tick size</strong></td>
+<td>Minimum price increment (US stocks ≥ $1: $0.01)</td>
+</tr>
+<tr>
+<td><strong>Lot / shares / qty</strong></td>
+<td>Order size</td>
+</tr>
+<tr>
+<td><strong>Price level</strong></td>
+<td>All resting orders at one price on one side</td>
+</tr>
+<tr>
+<td><strong>Depth</strong></td>
+<td>Aggregate quantity at each level</td>
+</tr>
+<tr>
+<td><strong>L1 / L2 / L3 data</strong></td>
+<td>L1 = BBO only. L2 = aggregated qty per price level. L3 = every individual order (ITCH is L3).</td>
+</tr>
+<tr>
+<td><strong>Maker / taker</strong></td>
+<td>Maker adds liquidity (rests in book). Taker removes it (crosses the spread).</td>
+</tr>
+<tr>
+<td><strong>Crossed / locked book</strong></td>
+<td>bid &gt; ask / bid == ask (shouldn't persist on one venue)</td>
+</tr>
+</tbody>
+</table></div>
+<h3>Order types you should implement (in this order)</h3>
+<ol>
+<li><strong>Limit order</strong>: buy/sell up to qty at price P or better. The unfilled remainder rests.</li>
+<li><strong>Market order</strong>: take whatever is available at any price. Never rests.</li>
+<li><strong>Cancel</strong>: remove a resting order by id.</li>
+<li><strong>Modify / replace</strong>: change price or qty. <strong>Priority rule</strong> (standard at most exchanges): reducing qty <em>keeps</em> time priority. Increasing qty or changing price <em>loses</em> it (treated as cancel + new).</li>
+<li><strong>Time-in-force:</strong> <strong>GTC</strong> (rests until cancelled), <strong>IOC</strong> (fill what you can now, cancel the rest), <strong>FOK</strong> (fill entirely now or do nothing, so you need a liquidity check first).</li>
+<li>Stretch: <strong>post-only</strong> (reject if it would take), <strong>iceberg</strong> (displayed vs hidden qty), <strong>stop / stop-limit</strong> (trigger on last trade price).</li>
+</ol>
+<h3>Matching rules</h3>
+<ul>
+<li><strong>Price-time priority (FIFO):</strong> better price first. At the same price, earlier order first. NASDAQ and most equities use this. <strong>Implement this.</strong></li>
+<li><strong>Pro-rata:</strong> at a price level, fills are split proportional to size (some futures markets). Good interview talking point.</li>
+<li>A trade happens at the <strong>resting (maker) order's price</strong>, not the aggressor's.</li>
+<li>An incoming order <strong>sweeps</strong> levels: matches the best opposite level, then the next, until it's filled or the price no longer crosses.</li>
+</ul>
+<h3>Two kinds of order book (important distinction)</h3>
+<div class="tw"><table class="stack">
+<thead>
+<tr>
+<th></th>
+<th><strong>Exchange matching engine</strong></th>
+<th><strong>Feed-handler book (market data)</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Who</td>
+<td>The exchange</td>
+<td>Every trading firm</td>
+</tr>
+<tr>
+<td>Input</td>
+<td>Orders from participants</td>
+<td>Exchange messages (ITCH: Add, Execute, Cancel, Delete, Replace)</td>
+</tr>
+<tr>
+<td>Does matching?</td>
+<td><strong>Yes</strong></td>
+<td><strong>No.</strong> The exchange already matched. You just <em>apply</em> events.</td>
+</tr>
+<tr>
+<td>Hot ops</td>
+<td>add, match, cancel</td>
+<td>add, reduce, delete by order id; read BBO</td>
+</tr>
+</tbody>
+</table></div>
+<p>Build <strong>both modes</strong> on the same data structure. Mode B is what HFT firms actually run, and you feed it real NASDAQ data from <code>itch_fpga/</code>.</p>
+
+</div></details>
+<details class="sec" id="order-book-s2"><summary><span class="n">3</span><span class="h">Data structures (the heart of the interview)</span></summary><div class="sb">
+<h3>Operations &amp; target complexity</h3>
+<div class="tw"><table class="stack">
+<thead>
+<tr>
+<th>Operation</th>
+<th>Target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Add order at existing level</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>Add order at new level</td>
+<td>O(log L) tree, or O(1) array</td>
+</tr>
+<tr>
+<td>Cancel / delete by order id</td>
+<td><strong>O(1)</strong></td>
+</tr>
+<tr>
+<td>Execute against best level</td>
+<td>O(1) per fill</td>
+</tr>
+<tr>
+<td>Get best bid/ask</td>
+<td><strong>O(1)</strong></td>
+</tr>
+<tr>
+<td>Get depth at price</td>
+<td>O(1)</td>
+</tr>
+</tbody>
+</table></div>
+<h3>Canonical design</h3>
+<div class="code"><button class="cp" type="button">Copy</button><pre><code>Order        { id, side, price, qty, timestamp, prev*, next*, level* }   // intrusive list node
+PriceLevel   { price, total_qty, count, head*, tail* }                   // FIFO queue of orders
+Side (bids)  : price -&gt; PriceLevel   (sorted; best = max)
+Side (asks)  : price -&gt; PriceLevel   (sorted; best = min)
+OrderIndex   : order_id -&gt; Order*    (hash map) — this gives O(1) cancel
+</code></pre></div>
+<ul>
+<li><strong>Intrusive doubly linked list</strong> per level: the <code>prev/next</code> pointers live <em>inside</em> the Order, so unlinking on cancel is O(1) and allocates nothing.</li>
+<li><strong>Hash map id → Order*</strong>: O(1) lookup for cancel/execute. <code>std::unordered_map</code> is slow (node-based, one allocation per insert). Use an <strong>open-addressing</strong> map (linear probing, e.g. <code>ankerl::unordered_dense</code>, <code>absl::flat_hash_map</code>), or a plain <code>vector</code> indexed by id if ids are dense.</li>
+</ul>
+<h3>Price-level container: the big trade-off</h3>
+<div class="tw"><table class="stack">
+<thead>
+<tr>
+<th>Option</th>
+<th>Pros</th>
+<th>Cons</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>std::map&lt;Price, Level&gt;</code> (red-black tree)</td>
+<td>Simple, handles any price</td>
+<td>Node allocation, pointer chasing, cache misses, O(log L)</td>
+</tr>
+<tr>
+<td><strong>Dense array indexed by tick</strong> (<code>levels[price - base]</code>) + cached best index</td>
+<td>O(1) everything, contiguous</td>
+<td>Needs bounded price range. Finding the next best after a level empties = scan (use a bitmap + <code>ctz</code>/<code>clz</code> to jump)</td>
+</tr>
+<tr>
+<td>Sorted <code>vector</code> of levels, <strong>best at the back</strong></td>
+<td>Most activity is near the top, so insert/erase near the back is cheap. Great cache locality.</td>
+<td>O(L) worst case insert</td>
+</tr>
+<tr>
+<td>Hybrid: array window around the mid + map for far-away prices</td>
+<td>Best of both</td>
+<td>More code</td>
+</tr>
+</tbody>
+</table></div>
+<p>Real-world insight (David Gross, Optiver, CppCon 2024): a typical stock book has ~1000 levels per side, but <strong>almost all activity is within a few levels of the top</strong>. So a sorted vector with best-at-the-end, searched linearly from the top, beats a tree in practice. <strong>Benchmark map vs vector vs array yourself.</strong> That benchmark table <em>is</em> your resume line.</p>
+<h3>Memory</h3>
+<ul>
+<li><strong>Object pool / free list</strong> for Orders: preallocate N orders in a <code>vector</code>, hand out indices, recycle on delete. Zero <code>malloc</code> on the hot path.</li>
+<li>Prefer <strong>indices (uint32) over pointers</strong>: smaller nodes, and the pool can be relocated.</li>
+<li><strong>Struct layout:</strong> put hot fields together, keep Order ≤ 64 B (one x86 cache line), avoid <code>bool</code> padding waste. Check with <code>sizeof</code> and <code>static_assert</code>.</li>
+<li><strong>Prices as integers</strong> (ticks, or ITCH's 4-implied-decimal <code>uint32</code>). <strong>Never use floating point for prices.</strong> Interviewers ask this.</li>
+</ul>
+
+</div></details>
+<details class="sec" id="order-book-s3"><summary><span class="n">4</span><span class="h">Low-latency C++ concepts you need</span></summary><div class="sb">
+<div class="tw"><table class="stack">
+<thead>
+<tr>
+<th>Concept</th>
+<th>One-line version</th>
+<th>Where it shows up</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Cache hierarchy</strong></td>
+<td>L1 ~1 ns, L2 ~4 ns, L3 ~15 ns, DRAM ~80–100 ns. A cache miss costs far more than arithmetic.</td>
+<td>Why array beats map</td>
+</tr>
+<tr>
+<td><strong>Cache line</strong></td>
+<td>64 B on x86, 128 B on Apple M. Unit of transfer.</td>
+<td>Struct sizing, false sharing</td>
+</tr>
+<tr>
+<td><strong>Spatial/temporal locality</strong></td>
+<td>Contiguous + reused data is fast</td>
+<td>vector vs list</td>
+</tr>
+<tr>
+<td><strong>Branch prediction</strong></td>
+<td>Mispredict ≈ 15–20 cycles. Make the common path predictable. <code>[[likely]]</code> and <code>[[unlikely]]</code> exist.</td>
+<td>Side checks, rare order types</td>
+</tr>
+<tr>
+<td><strong>Allocation cost</strong></td>
+<td><code>malloc</code> can take 100s of ns and has unpredictable tails</td>
+<td>Pools</td>
+</tr>
+<tr>
+<td><strong>Virtual dispatch</strong></td>
+<td>Indirect call, blocks inlining</td>
+<td>Use templates/CRTP or <code>std::variant</code></td>
+</tr>
+<tr>
+<td><strong>Inlining / <code>-O3</code> / LTO / PGO</strong></td>
+<td>Compiler does a lot if you let it</td>
+<td>Build flags</td>
+</tr>
+<tr>
+<td><strong>False sharing</strong></td>
+<td>Two threads write different vars on the same cache line, so the line ping-pongs</td>
+<td><code>alignas(64/128)</code> padding</td>
+</tr>
+<tr>
+<td><strong>Lock-free SPSC ring buffer</strong></td>
+<td>One producer, one consumer, <code>std::atomic</code> head/tail with acquire/release ordering</td>
+<td>Feed thread → strategy thread</td>
+</tr>
+<tr>
+<td><strong>Memory ordering</strong></td>
+<td><code>relaxed</code> / <code>acquire</code> / <code>release</code> / <code>seq_cst</code></td>
+<td>Must be able to explain acquire/release</td>
+</tr>
+<tr>
+<td><strong>Tail latency</strong></td>
+<td>p99/p99.9 matter more than the mean in trading</td>
+<td>How you report results</td>
+</tr>
+<tr>
+<td><strong>Kernel bypass</strong> (just know it exists)</td>
+<td>DPDK, Solarflare/AMD Onload/ef_vi, busy polling, CPU pinning, isolcpus, hugepages</td>
+<td>"How would you go further?"</td>
+</tr>
+</tbody>
+</table></div>
+<h3>Measuring latency correctly</h3>
+<ul>
+<li>Use <code>std::chrono::steady_clock</code>, or <code>rdtsc</code> (x86) / <code>cntvct_el0</code> (ARM) for cycle counts. Measure <strong>per operation</strong>, record into a histogram, report p50/p90/p99/p99.9/max.</li>
+<li><strong>Warm up</strong> first (caches, branch predictors, page faults). Pin to a core on Linux.</li>
+<li>Beware the compiler optimizing your benchmark away (<code>benchmark::DoNotOptimize</code>).</li>
+<li>Throughput (msgs/sec over a whole file replay) <em>and</em> latency per op are separate metrics. Report both.</li>
+</ul>
+
+</div></details>
+<details class="sec" id="order-book-s4"><summary><span class="n">5</span><span class="h">ITCH replay (connects to project 3)</span></summary><div class="sb">
+<p>NASDAQ publishes free sample full-day ITCH 5.0 files (several GB, gzipped) at <code>emi.nasdaq.com/ITCH/Nasdaq ITCH/</code>. File format: each message = <strong>2-byte big-endian length + message bytes</strong>. Messages you need for the book:</p>
+<div class="tw"><table class="stack">
+<thead>
+<tr>
+<th>Type</th>
+<th>Name</th>
+<th>Book action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>R</code></td>
+<td>Stock Directory</td>
+<td>map <code>stock_locate</code> → symbol</td>
+</tr>
+<tr>
+<td><code>A</code> / <code>F</code></td>
+<td>Add Order (no MPID / with MPID)</td>
+<td>insert order (ref, side, shares, price)</td>
+</tr>
+<tr>
+<td><code>E</code></td>
+<td>Order Executed</td>
+<td>reduce qty by executed shares; delete if 0</td>
+</tr>
+<tr>
+<td><code>C</code></td>
+<td>Order Executed With Price</td>
+<td>same as E (price differs, for trade print)</td>
+</tr>
+<tr>
+<td><code>X</code></td>
+<td>Order Cancel</td>
+<td>reduce qty by cancelled shares</td>
+</tr>
+<tr>
+<td><code>D</code></td>
+<td>Order Delete</td>
+<td>remove order</td>
+</tr>
+<tr>
+<td><code>U</code></td>
+<td>Order Replace</td>
+<td>delete original ref, add new ref with new price/qty (same side, same stock)</td>
+</tr>
+<tr>
+<td><code>P</code></td>
+<td>Trade (non-cross)</td>
+<td>hidden-order trade, no book change</td>
+</tr>
+</tbody>
+</table></div>
+<p>All integers are <strong>big-endian</strong>. Prices are <code>uint32</code> with 4 implied decimals. Timestamps are 6-byte ns since midnight. Full field layouts are in <code>itch_fpga/theory.md</code> §1.</p>
+<p>Plan: write the <strong>software ITCH parser in C++ first</strong>. It becomes the <strong>golden reference model</strong> for the FPGA parser, and the event source for your book. One parser, two projects.</p>
+<p>Validation: after replay, print the top 5 levels of AAPL at some timestamp. Cross-check that the book is never crossed, that no order qty goes negative, and that every E/X/D references an existing order.</p>
+
+</div></details>
+<details class="sec" id="order-book-s5"><summary><span class="n">6</span><span class="h">Architecture to build</span></summary><div class="sb">
+<div class="code"><button class="cp" type="button">Copy</button><pre><code> ITCH file ──► mmap'd reader ──► parser (zero-copy, switch on type) ──► Book manager
+                                                                       │ per-symbol books (array by stock_locate)
+                                                                       ▼
+                                                              BBO updates ──► SPSC queue ──► &quot;strategy&quot; thread (prints/records)
+</code></pre></div>
+<p>Milestones:</p>
+<ol>
+<li>Matching engine (mode A) with unit tests for every order type. Use a tiny text protocol (<code>B 100 @ 50.10</code>) for testing.</li>
+<li>Swap map → array/vector levels, add the pool allocator. Benchmark each version with the same random order stream.</li>
+<li>Feed-handler mode (B): ITCH replay for one day, all symbols. Report msgs/sec and per-message latency percentiles.</li>
+<li>Stretch: SPSC queue + second thread, L2 snapshot output, a Python/Matplotlib depth chart of one stock over the day.</li>
+</ol>
+
+</div></details>
+<details class="sec" id="order-book-s6"><summary><span class="n">7</span><span class="h">Interview questions you should be able to answer</span></summary><div class="sb">
+<p><strong>Classic</strong></p>
+<ol>
+<li>Design an order book. Walk through add / cancel / execute / best price complexities.</li>
+<li>Why a hash map from order id? What happens with <code>std::unordered_map</code> under high churn?</li>
+<li><code>std::map</code> vs array vs sorted vector for price levels. When does each win?</li>
+<li>Why not floats for prices?</li>
+<li>How does a market order sweep multiple levels? What about IOC vs FOK?</li>
+<li>What priority rule applies when an order is modified?</li>
+<li>What's false sharing? How do you avoid it?</li>
+<li>Implement a lock-free SPSC queue. Why is acquire/release enough? Why not <code>seq_cst</code>?</li>
+<li>How do you measure latency? Why p99 and not average?</li>
+<li>Your book takes 500 ns per message. Where do you look first? (Profile, count allocations, cache misses.)</li>
+<li>How would you handle 8000 symbols? (Array of books indexed by stock_locate. Shard symbols across cores.)</li>
+<li>Pro-rata vs FIFO matching: what incentives does each create?</li>
+<li>(Quant flavour) What information does the order book give about short-term price direction? (Order imbalance, microprice.)</li>
+</ol>
+<p><strong>AI-era / "defend your project" probes</strong></p>
+<ul>
+<li>"Show me your latency histogram. What's causing the tail?"</li>
+<li>"What did you try that <em>didn't</em> help?" (Keep a <code>NOTES.md</code> log of every optimization with before/after numbers. It's gold for interviews.)</li>
+<li>"Here's an AI-generated order book. Find the bug." (Classic bugs: forgetting to remove an empty level, not updating the best price after a delete, iterator invalidation, a modify that keeps priority on a qty increase, integer overflow in notional.)</li>
+<li>"How did you verify correctness?" (Unit tests, invariants checked after every event in debug builds, cross-check against a naive reference implementation on random streams = <strong>differential testing</strong>.)</li>
+</ul>
+
+</div></details>
+<details class="sec" id="order-book-s7"><summary><span class="n">8</span><span class="h">Resources (in priority order)</span></summary><div class="sb">
+<ol>
+<li><strong>CppCon 2024 keynote, David Gross (Optiver): "When Nanoseconds Matter: Ultrafast Trading Systems in C++"</strong> (YouTube, CppCon channel). Watch the whole thing: order book design, why vectors beat maps, SPSC queues, measuring. ~90 min. <em>If you watch one thing, watch this.</em></li>
+<li><strong>CppCon 2017, Carl Cook (Optiver): "When a Microsecond Is an Eternity"</strong> (YouTube). Low-latency C++ techniques: hot path, warming, avoiding allocations/exceptions/virtuals.</li>
+<li><strong>valkheim.github.io, "C++ performance: Case study of a limit order book"</strong>. A blog walkthrough of optimizing a LOB, with the dense-array vs map argument. Read it after your v1 works.</li>
+<li><strong>"How to Build a Fast Limit Order Book" (WK Selph, 2011, archived blog, widely linked from GitHub repos)</strong>. The classic short post: tree of levels + linked lists + hash map. Read it on day 1. It's short.</li>
+<li><strong>Sourav Ghosh, <em>Building Low Latency Applications with C++</em> (Packt, 2023)</strong>. Ch. 4 (low-latency building blocks: memory pool, lock-free queue, logger), Ch. 6 (matching engine and order book), Ch. 8 (market data). The code is on GitHub. Use it as a reference implementation, not a copy source.</li>
+<li><strong>Jane Street tech talk, Brian Nigito: "How to Build an Exchange"</strong> (YouTube). Architecture of a real exchange: sequencer, matching, market data.</li>
+<li><strong>Erik Rigtorp's blog + <code>rigtorp/SPSCQueue</code> on GitHub</strong>. A clean, tiny, correct lock-free SPSC queue, plus notes on low-latency tuning.</li>
+<li><strong>Larry Harris, <em>Trading and Exchanges</em>, Ch. 1–6</strong>. Microstructure concepts (see §1).</li>
+<li>Reference repos to <em>read, not copy</em>: <code>brprojects/Limit-Order-Book</code> (C++, market/limit/stop orders), <code>mattpearson/OrderBook</code> (map vs RB-tree comparison), <code>callamd/orderbook</code> (C++/Rust/Python + a PITCH parser).</li>
+<li><strong>NASDAQ TotalView-ITCH 5.0 specification PDF</strong> (nasdaqtrader.com). You'll need §4 (message formats).</li>
+<li>Communities: r/highfreqtrading, r/quant, r/cpp_questions. The "Low Latency" topic on the Optiver tech blog.</li>
+</ol>
+
+</div></details>
+<details class="sec" id="order-book-s8"><summary><span class="n">9</span><span class="h">Metrics to report (resume line template)</span></summary><div class="sb">
+<blockquote>
+<p>"C++20 limit order book + NASDAQ ITCH 5.0 feed handler. Replays a full trading day (≈ X00 M messages) at <strong>N M msgs/s</strong>. Add/cancel/execute p50 <strong>x ns</strong>, p99 <strong>y ns</strong>. Dense-array price levels + pooled intrusive lists were <strong>k× faster than <code>std::map</code></strong> (benchmark included)."</p>
+</blockquote>
+<p>Checklist: unit tests ✔, randomized differential test vs naive book ✔, full-day replay ✔, latency histogram ✔, benchmark table across designs ✔, README with architecture diagram ✔.</p></div></details></div></section>
+<section class="view" id="v-itch-fpga" hidden><div class="band phead"><a class="back" href="#home">← All tracks</a><h2 class="pt">NASDAQ ITCH 5.0 Parser on FPGA</h2><div class="lead"><blockquote>
+<p>Goal: an RTL (SystemVerilog) block that takes a byte stream of NASDAQ ITCH 5.0 messages (from a file in simulation, later from UDP/MoldUDP64) and outputs decoded fields (type, order ref, side, shares, price, …) with deterministic latency of a few clock cycles. It's verified against your C++ parser from <code>order_book/</code> as the golden model.</p>
+</blockquote>
+<p>Why FPGAs in trading: a CPU path (NIC → kernel/bypass → parse → decide → send) costs ~1–5 µs. On an FPGA, the network PHY feeds logic directly, so parse+decide can take <strong>tens of ns</strong> with <em>deterministic</em> latency. Every serious HFT shop (Jump, Optiver, IMC, Citadel Securities, Tower, Graviton, Quadeye…) hires FPGA engineers, and "market data feed handler in RTL" is <em>the</em> canonical project.</p>
+
+</div><div class="tools"><input type="search" class="q" placeholder="Search this track" aria-label="Search ITCH on FPGA"><button type="button" class="ex">Expand all</button></div></div><div class="band secs"><details class="sec" id="itch-fpga-s0"><summary><span class="n">1</span><span class="h">The protocol stack (what bytes arrive)</span></summary><div class="sb">
+<div class="code"><button class="cp" type="button">Copy</button><pre><code> Ethernet (14 B) │ IPv4 (20 B) │ UDP (8 B) │ MoldUDP64 header (20 B) │ [len(2) │ ITCH msg] [len(2) │ ITCH msg] ...
+</code></pre></div>
+<ul>
+<li><strong>MoldUDP64</strong> (NASDAQ's packet framing for multicast): <code>Session</code> (10 B ASCII) + <code>Sequence Number</code> (8 B, number of the first message in the packet) + <code>Message Count</code> (2 B). Then message blocks, each a <strong>2-byte length</strong> + the message. Sequence numbers let you detect <strong>gaps</strong> (packet loss), which is an interview topic. Recovery goes through a request/retransmit server.</li>
+<li><strong>SoupBinTCP</strong>: the TCP equivalent (used for order entry/OUCH and some replay). Just know it exists.</li>
+<li><strong>The sample file</strong> from <code>emi.nasdaq.com/ITCH/Nasdaq ITCH/</code> = the same <code>[len(2) | msg]</code> blocks back to back, with no UDP/Mold headers. <strong>Start with the file.</strong> It's the payload of the network stack.</li>
+</ul>
+<h3>ITCH 5.0 essentials</h3>
+<ul>
+<li><strong>All integers big-endian.</strong> Alpha fields are ASCII, left-justified, space-padded.</li>
+<li><strong>Common header (11 bytes):</strong> <code>Message Type</code> (1, ASCII char) · <code>Stock Locate</code> (2) · <code>Tracking Number</code> (2) · <code>Timestamp</code> (6, ns since midnight).</li>
+<li><strong>Price(4)</strong> = <code>uint32</code> with 4 implied decimals ($123.45 → 1234500). <strong>Price(8)</strong> has 8 decimals (MWCB only).</li>
+</ul>
+<div class="tw"><table class="stack">
+<thead>
+<tr>
+<th>Type</th>
+<th>Message</th>
+<th>Length (bytes)</th>
+<th>Fields after the 11-byte header</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>S</code></td>
+<td>System Event</td>
+<td>12</td>
+<td>event code (1)</td>
+</tr>
+<tr>
+<td><code>R</code></td>
+<td>Stock Directory</td>
+<td>39</td>
+<td>stock(8), market category, …</td>
+</tr>
+<tr>
+<td><code>H</code></td>
+<td>Stock Trading Action</td>
+<td>25</td>
+<td>stock(8), state, reserved, reason(4)</td>
+</tr>
+<tr>
+<td><code>A</code></td>
+<td><strong>Add Order</strong></td>
+<td><strong>36</strong></td>
+<td>order ref(8), side(1 'B'/'S'), shares(4), stock(8), price(4)</td>
+</tr>
+<tr>
+<td><code>F</code></td>
+<td>Add Order w/ MPID</td>
+<td>40</td>
+<td>as A + attribution(4)</td>
+</tr>
+<tr>
+<td><code>E</code></td>
+<td><strong>Order Executed</strong></td>
+<td><strong>31</strong></td>
+<td>order ref(8), executed shares(4), match number(8)</td>
+</tr>
+<tr>
+<td><code>C</code></td>
+<td>Order Executed w/ Price</td>
+<td>36</td>
+<td>as E + printable(1), execution price(4)</td>
+</tr>
+<tr>
+<td><code>X</code></td>
+<td><strong>Order Cancel</strong></td>
+<td><strong>23</strong></td>
+<td>order ref(8), cancelled shares(4)</td>
+</tr>
+<tr>
+<td><code>D</code></td>
+<td><strong>Order Delete</strong></td>
+<td><strong>19</strong></td>
+<td>order ref(8)</td>
+</tr>
+<tr>
+<td><code>U</code></td>
+<td><strong>Order Replace</strong></td>
+<td><strong>35</strong></td>
+<td>original ref(8), new ref(8), shares(4), price(4)</td>
+</tr>
+<tr>
+<td><code>P</code></td>
+<td>Trade (non-cross)</td>
+<td>44</td>
+<td>order ref, side, shares, stock, price, match no.</td>
+</tr>
+<tr>
+<td><code>Q</code>, <code>B</code>, <code>I</code>, <code>N</code>, <code>Y</code>, <code>L</code>, <code>V</code>, <code>W</code>, <code>K</code>, <code>J</code>, <code>h</code>, <code>O</code></td>
+<td>Cross trade, broken trade, NOII, RPII, Reg SHO, MPID position, MWCB, IPO, LULD, operational halt, DLCR</td>
+<td>various</td>
+<td>parse the length, can skip contents</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Always verify lengths and offsets against the official spec PDF.</strong> Don't trust this table (or an AI) blindly. Writing a tiny Python script that asserts <code>sum(field sizes) == length</code> for every message type is a good first task.</p>
+<p><strong>Key design insight:</strong> every message's length is known from its type byte, <em>and</em> it's given by the 2-byte length prefix anyway. So the parser never needs to scan for delimiters. That's why ITCH is FPGA-friendly.</p>
+
+</div></details>
+<details class="sec" id="itch-fpga-s1"><summary><span class="n">2</span><span class="h">Digital design / Verilog ramp (≈ 2 days)</span></summary><div class="sb">
+<p>You're ECE, so you likely know gates and FSMs from coursework. The new part is <strong>writing synthesizable RTL like a hardware engineer</strong>.</p>
+<h3>Must-know concepts</h3>
+<div class="tw"><table class="stack">
+<thead>
+<tr>
+<th>Concept</th>
+<th>What to know</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Combinational vs sequential logic</td>
+<td><code>always_comb</code> vs <code>always_ff @(posedge clk)</code></td>
+</tr>
+<tr>
+<td><strong>Blocking (<code>=</code>) vs non-blocking (<code>&lt;=</code>)</strong></td>
+<td><code>&lt;=</code> in sequential, <code>=</code> in combinational. Mixing them causes sim/synth mismatches (Cummings' paper, see resources).</td>
+</tr>
+<tr>
+<td>Registers, enables, synchronous reset</td>
+<td>Default to synchronous active-high or active-low resets. Be consistent.</td>
+</tr>
+<tr>
+<td><strong>FSMs</strong></td>
+<td>Moore vs Mealy, one-hot vs binary encoding, two-process style</td>
+</tr>
+<tr>
+<td><strong>Pipelining</strong></td>
+<td>Split long combinational paths with registers. Latency ↑, Fmax ↑, throughput stays 1/cycle.</td>
+</tr>
+<tr>
+<td><strong>Timing</strong></td>
+<td>Setup/hold, critical path, Fmax, slack, timing closure. "Logic levels" per stage.</td>
+</tr>
+<tr>
+<td><strong>Valid/ready handshake</strong></td>
+<td>Transfer happens when <code>valid &amp;&amp; ready</code>. Backpressure. <strong>AXI4-Stream</strong>: <code>tdata</code>, <code>tvalid</code>, <code>tready</code>, <code>tkeep</code> (which bytes are valid), <code>tlast</code> (end of packet).</td>
+</tr>
+<tr>
+<td>FIFOs</td>
+<td>Sync FIFO; <strong>async FIFO with Gray-code pointers</strong> for clock domain crossing</td>
+</tr>
+<tr>
+<td><strong>CDC (clock domain crossing)</strong></td>
+<td>Metastability, 2-flop synchronizer for single bits, async FIFO for buses. <strong>Asked in every FPGA interview.</strong></td>
+</tr>
+<tr>
+<td>FPGA resources</td>
+<td>LUTs, FFs, BRAM, DSP slices, carry chains. What maps to what.</td>
+</tr>
+<tr>
+<td>Endianness &amp; byte lanes</td>
+<td>Big-endian ITCH on a little-endian-lane bus: byte 0 of the message is in which bits of <code>tdata</code>? Decide once, document it.</td>
+</tr>
+</tbody>
+</table></div>
+<h3>Tools (all free, all run on your Mac or a Linux VM)</h3>
+<ul>
+<li><strong>Verilator</strong> (fast, SystemVerilog lint + sim) or <strong>Icarus Verilog</strong> (simpler, slower). Use <code>brew install verilator icarus-verilog</code>.</li>
+<li><strong>cocotb</strong>: write testbenches <strong>in Python</strong>. You're strong in Python, so this is a big win. Your testbench reads the real ITCH file, drives bytes in, and compares outputs with a Python/C++ reference.</li>
+<li><strong>GTKWave</strong> or <strong>Surfer</strong> for waveforms.</li>
+<li><strong>Vivado</strong> (Xilinx/AMD, Linux/Windows only, free WebPACK edition) for synthesis + timing reports when you want real Fmax/LUT numbers. Use the IITG lab or a VM. Open-source alternative: <strong>Yosys + nextpnr</strong> for Lattice iCE40/ECP5.</li>
+<li>Do you own a board? <strong>Not required.</strong> Simulation + a synthesis report (Fmax, LUTs) is a complete, credible project. Common boards if you get access: Digilent Basys 3 / Arty A7 (Artix-7), and for networking, boards with SFP+/Ethernet.</li>
+</ul>
+
+</div></details>
+<details class="sec" id="itch-fpga-s2"><summary><span class="n">3</span><span class="h">The core hardware problem: unaligned messages on a wide bus</span></summary><div class="sb">
+<p>A 10 GbE MAC typically gives you a <strong>64-bit (8-byte) AXI-Stream at 156.25 MHz</strong>. ITCH messages are 12–50 bytes and start at <strong>any byte offset</strong> within an 8-byte beat. Example: a 36-byte Add Order followed by a 19-byte Delete:</p>
+<div class="code"><button class="cp" type="button">Copy</button><pre><code>beat 0: [len len A  loc loc trk trk ts ]
+beat 1: [ts ts ts ts ts ref ref ref    ]
+...
+beat 4: [... price price | len len D loc]  &lt;- message boundary mid-beat
+</code></pre></div>
+<p>Design approaches (pick one, explain why in your README):</p>
+<ol>
+<li><strong>Byte-serial</strong> (1 byte/cycle). Trivial FSM with a byte counter. Easy, but 8× too slow for 10G at 156 MHz. <strong>Good v0.</strong></li>
+<li><strong>Shift-register / realignment buffer</strong>: accumulate bytes into a buffer wide enough for the longest message (50 B = 400 bits). When <code>count ≥ msg_len</code>, emit the whole message in parallel and shift out the consumed bytes. Needs a barrel shifter (muxes = LUTs = timing pressure).</li>
+<li><strong>Per-type field extraction in parallel</strong>: once a full message is aligned, every field sits at a fixed offset for that type, so extraction is just wires + a mux on type. Output a wide struct: <code>{type, locate, ts, ref, side, shares, price, new_ref, ...}</code> with <code>valid</code>.</li>
+<li><strong>Multiple messages per beat</strong> (stretch): two short messages can end and start in the same 8-byte beat. Handling &gt;1 message/cycle is the "advanced" version and a great interview story.</li>
+</ol>
+<p><strong>Metrics:</strong> latency (cycles from last byte of message in → decoded valid out), throughput (bytes/cycle sustained), Fmax, LUT/FF usage.</p>
+
+</div></details>
+<details class="sec" id="itch-fpga-s3"><summary><span class="n">4</span><span class="h">Scope options (pick one when you start; I recommend B then C)</span></summary><div class="sb">
+<div class="tw"><table class="stack">
+<thead>
+<tr>
+<th>Option</th>
+<th>What you build</th>
+<th>Effort</th>
+<th>Signal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>A. Byte-serial parser (sim only)</strong></td>
+<td>FSM, 1 B/cycle, outputs decoded Add/Exec/Cancel/Delete/Replace. cocotb test against the real file.</td>
+<td>~1 week incl. Verilog ramp</td>
+<td>Solid beginner project</td>
+</tr>
+<tr>
+<td><strong>B. 64-bit AXI-Stream parser</strong></td>
+<td>Realignment buffer, ≥1 msg/cycle, MoldUDP64 header parse + sequence gap detection, synthesized in Vivado/Yosys with Fmax reported</td>
+<td>~1.5–2 weeks</td>
+<td><strong>Strong. This is the resume line.</strong></td>
+</tr>
+<tr>
+<td><strong>C. B + on-chip top-of-book</strong></td>
+<td>Hash table in BRAM (order ref → {price, qty, side, locate}) + per-symbol best bid/ask registers for a few symbols. Emit BBO updates.</td>
+<td>+1–2 weeks</td>
+<td>Very strong ("tick-to-BBO in N ns")</td>
+</tr>
+<tr>
+<td><strong>D. Full stack</strong></td>
+<td>Ethernet MAC/PHY → IP/UDP (use Alex Forencich's <code>verilog-ethernet</code>) → Mold → ITCH on a real board, fed from a PC replaying pcap</td>
+<td>needs hardware + time</td>
+<td>Excellent but likely next semester</td>
+</tr>
+</tbody>
+</table></div>
+<p>For C, the on-chip book is the hard part: BRAM has 1–2 cycle read latency, so back-to-back messages to the same order cause <strong>read-after-write hazards</strong>. You need forwarding/bypass logic, just like a CPU pipeline. Great interview material.</p>
+
+</div></details>
+<details class="sec" id="itch-fpga-s4"><summary><span class="n">5</span><span class="h">Verification strategy (this is what makes it credible)</span></summary><div class="sb">
+<ol>
+<li><strong>Golden model:</strong> your C++ (or Python) ITCH parser from <code>order_book/</code> produces the expected decoded stream (CSV/JSON).</li>
+<li><strong>cocotb testbench:</strong> reads the same file, drives bytes into the DUT with <strong>random <code>tvalid</code> gaps and random <code>tready</code> backpressure</strong>, captures outputs, and diffs them against the golden model. Run on millions of messages.</li>
+<li><strong>Directed tests:</strong> each message type at every byte alignment (0–7), back-to-back short messages, max-length messages, packet boundaries.</li>
+<li><strong>Assertions (SVA):</strong> <code>valid</code> held until <code>ready</code>, data stable while stalled, no output without input.</li>
+<li>Stretch: <strong>formal verification</strong> with SymbiYosys (ZipCPU's tutorials) to prove handshake properties.</li>
+<li>Report: "verified on N million messages from the NASDAQ sample day with randomized backpressure, zero mismatches."</li>
+</ol>
+
+</div></details>
+<details class="sec" id="itch-fpga-s5"><summary><span class="n">6</span><span class="h">Interview questions</span></summary><div class="sb">
+<p><strong>FPGA/RTL fundamentals</strong></p>
+<ol>
+<li>Blocking vs non-blocking. What goes wrong if you mix them?</li>
+<li>What is metastability? How does a 2-FF synchronizer help? Why not for multi-bit buses?</li>
+<li>Design an async FIFO. Why Gray code pointers? How do you generate full/empty?</li>
+<li>Setup vs hold violation. Which one can you fix by lowering the clock? (Setup only.)</li>
+<li>How do you increase Fmax? (Pipeline, retime, reduce fan-out, reduce logic levels.)</li>
+<li>Latency vs throughput in a pipeline. Can you have 1 msg/cycle throughput with 5 cycles latency? (Yes.)</li>
+<li>Explain AXI-Stream handshake and backpressure. Can <code>tvalid</code> depend on <code>tready</code>? (No, AXI rule: a source must not wait for ready before asserting valid.)</li>
+<li>What do LUTs, FFs, BRAMs and DSPs implement? Would a 50-byte barrel shifter be expensive?</li>
+<li>Write an FSM in SystemVerilog on a whiteboard (e.g. a sequence detector).</li>
+</ol>
+<p><strong>Trading-specific</strong></p>
+<ol start="10">
+<li>Why do HFT firms use FPGAs? What's tick-to-trade latency?</li>
+<li>How do you detect and handle a dropped UDP packet in MoldUDP64? (Sequence gap → request retransmission / arbitrate between redundant A/B feeds.)</li>
+<li>Why is ITCH big-endian on the wire, and what does that mean for your byte lanes?</li>
+<li>How would you maintain an order book in hardware? Hash collisions? Read-after-write hazards?</li>
+<li>A/B feed arbitration: the same data arrives on two multicast lines. How do you dedupe? (By sequence number, take the first.)</li>
+</ol>
+<p><strong>AI-era probes</strong></p>
+<ul>
+<li>"How did you verify this?" A good answer is a golden-model diff on real data plus randomized backpressure, with assertions.</li>
+<li>"Here's a waveform, find the bug" (a dropped beat when <code>tready</code> deasserts at the same cycle a message ends). Practice reading your own waveforms.</li>
+<li>HLS (Vitis HLS, C++ → RTL) vs hand-written RTL: when would you use each? Firms use both. Hand-written RTL wins on latency control.</li>
+</ul>
+
+</div></details>
+<details class="sec" id="itch-fpga-s6"><summary><span class="n">7</span><span class="h">Resources (priority order)</span></summary><div class="sb">
+<ol>
+<li><strong>NASDAQ TotalView-ITCH 5.0 Specification (PDF, nasdaqtrader.com)</strong>. §1–3 (architecture, data types) and §4 (message formats). Keep it open the whole project. <strong>Also the MoldUDP64 spec PDF</strong> (same site, ~5 pages).</li>
+<li><strong>Sample data:</strong> <code>emi.nasdaq.com/ITCH/Nasdaq ITCH/</code> (e.g. a <code>*.NASDAQ_ITCH50.gz</code> day file). It's huge, so take the first 10–100 MB for tests.</li>
+<li><strong>HDLBits (hdlbits.01xz.net)</strong>. Do the sections: Verilog Language (all), Circuits → Sequential Logic → Latches and FFs, Counters, Shift Registers, <strong>Finite State Machines</strong> (do ~15 FSM problems, including the "serial receiver" ones, which are basically byte-protocol parsers). ~1 day.</li>
+<li><strong>Harris &amp; Harris, <em>Digital Design and Computer Architecture</em></strong>. Ch. 3 (sequential logic, timing, metastability, §3.5 synchronizers) and Ch. 4 (HDL), as a refresher.</li>
+<li><strong>Clifford Cummings (Sunburst Design) papers</strong> (free PDFs): "Nonblocking Assignments in Verilog Synthesis, Coding Styles That Kill!", "Clock Domain Crossing (CDC) Design &amp; Verification Techniques Using SystemVerilog", "Simulation and Synthesis Techniques for Asynchronous FIFO Design". Interview classics.</li>
+<li><strong>ZipCPU blog (zipcpu.com)</strong>. Posts on AXI-Stream / handshaking ("Strategies for pipelining", the skid buffer post) and formal verification with SymbiYosys. The skid buffer post is a must-read for valid/ready.</li>
+<li><strong>cocotb docs</strong> (docs.cocotb.org). Quickstart + "Writing Testbenches". Plus Verilator's cocotb integration.</li>
+<li><strong>Reference RTL to read (don't copy):</strong> <code>Essenceia/ITCH</code> (RTL ITCH 5.0 decoder with auto-generated message outputs, pairs with a MoldUDP64 module), <code>LaSaber/Nasdaq-HFT-FPGA</code> (Icarus Verilog decoder + testbench replaying NASDAQ dumps, MoldUDP64, OUCH). Both are CC BY-NC. <strong>Columbia CSEE 4840 (Spring 2026) "Market Data Parser" design doc</strong> (DE1-SoC, ITCH parsing + order hash table in fabric). Excellent for option C.</li>
+<li><strong>Alex Forencich, <code>verilog-ethernet</code> / Corundum (GitHub)</strong>. The standard open-source 1G/10G Ethernet + IP/UDP stack, for option D.</li>
+<li><strong>Nandland (nandland.com)</strong>. Beginner-friendly FPGA explanations if HDLBits feels too terse. r/FPGA has a good wiki/FAQ on getting started.</li>
+</ol>
+
+</div></details>
+<details class="sec" id="itch-fpga-s7"><summary><span class="n">8</span><span class="h">Metrics / resume line</span></summary><div class="sb">
+<blockquote>
+<p>"SystemVerilog NASDAQ ITCH 5.0 + MoldUDP64 decoder on a 64-bit AXI-Stream: <strong>1 message/cycle at X MHz</strong> (Artix-7 / Vivado), <strong>N-cycle (≈ Y ns) latency</strong>, sequence-gap detection. Verified with cocotb against a C++ golden model on Z million real NASDAQ messages under randomized backpressure."</p>
+</blockquote></div></details></div></section>
+<section class="view" id="v-chess-engine" hidden><div class="band phead"><a class="back" href="#home">← All tracks</a><h2 class="pt">Chess Engine</h2><div class="lead"><blockquote>
+<p>Current state (<code>~/chess_eng</code>): 8×8 list-of-strings board in <code>ChessEngine.py</code> (<code>GameState</code>) + PyGame rendering in <code>ChessMain.py</code>. Your README says "AlphaZero-style engine that can beat me".</p>
+<p>Recommended path: <strong>keep the PyGame UI</strong>, write the engine as a separate <strong>C++ program that speaks UCI</strong>. The UI talks to it through a subprocess (and so can any chess GUI or lichess-bot). Classical alpha-beta first → then <strong>NNUE</strong> (a neural eval, the modern Stockfish approach) → then optionally an <strong>AlphaZero-style MCTS + policy/value net</strong> as a second engine you can pit against the first. A pure-Python engine tops out around ~1500–1800 Elo because it's 50–100× slower. C++ makes every later idea pay off.</p>
+</blockquote>
+
+</div><div class="tools"><input type="search" class="q" placeholder="Search this track" aria-label="Search Chess engine"><button type="button" class="ex">Expand all</button></div></div><div class="band secs"><details class="sec" id="chess-engine-s0"><summary><span class="n">1</span><span class="h">Chess rules that bite programmers</span></summary><div class="sb">
+<p>You know how pieces move. These are the edge cases that break move generators:</p>
+<ul>
+<li><strong>Castling</strong> (O-O / O-O-O): king and rook haven't moved (track 4 <strong>castling-rights</strong> flags), the squares between are empty, <strong>the king is not in check, doesn't pass through an attacked square, and doesn't land on one</strong>. The rook may pass through an attacked square (queenside b1/b8).</li>
+<li><strong>En passant:</strong> only immediately after an enemy pawn's double push. Track the <strong>en-passant target square</strong>. Nasty edge case: the en-passant capture can expose your king along the <strong>rank</strong> (both pawns vanish from the same rank). Test position for this in §3.</li>
+<li><strong>Promotion:</strong> to Q, R, B or N (underpromotion matters, e.g. knight promotion with check). Promotion with capture.</li>
+<li><strong>Legality:</strong> a move is illegal if it leaves your own king in check. This includes moving a <strong>pinned</strong> piece and the king walking into an attacked square, including a square "behind" itself along a slider's line.</li>
+<li><strong>Game end:</strong> checkmate, stalemate (no legal moves, not in check = draw), <strong>50-move rule</strong> (halfmove clock, reset on pawn move/capture), <strong>threefold repetition</strong> (needs position hashing), insufficient material.</li>
+</ul>
+<h3>FEN (Forsyth–Edwards Notation): learn to read and write it</h3>
+<p><code>rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1</code>
+= piece placement (rank 8 → 1) · side to move · castling rights · en-passant square · halfmove clock · fullmove number. <strong>Your first engine function is <code>load_fen</code> / <code>to_fen</code>.</strong> All tests are FEN positions.</p>
+<p>Notation: squares a1..h8. In code, index 0..63 with <strong>a1 = 0, h1 = 7, a8 = 56, h8 = 63</strong> (the "little-endian rank-file" mapping most engines use).</p>
+
+</div></details>
+<details class="sec" id="chess-engine-s1"><summary><span class="n">2</span><span class="h">Board representation</span></summary><div class="sb">
+<div class="tw"><table class="stack">
+<thead>
+<tr>
+<th>Representation</th>
+<th>Idea</th>
+<th>Verdict</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>8×8 array (what you have)</td>
+<td><code>board[r][c]</code></td>
+<td>Easy, slow, needs bounds checks</td>
+</tr>
+<tr>
+<td><strong>10×12 mailbox / 0x88</strong></td>
+<td>Padded board, so off-board moves land on sentinel squares (0x88: <code>sq &amp; 0x88</code> != 0 means off-board)</td>
+<td>Good stepping stone</td>
+</tr>
+<tr>
+<td><strong>Bitboards</strong></td>
+<td>One 64-bit integer per (color, piece type): 12 bitboards. Bit i set = piece on square i.</td>
+<td><strong>What all strong engines use. Go here.</strong></td>
+</tr>
+</tbody>
+</table></div>
+<h3>Bitboard toolkit</h3>
+<ul>
+<li>Set ops: <code>occupied = white | black</code>, <code>empty = ~occupied</code>, <code>us &amp; them</code>, etc.</li>
+<li>Shifts: north = <code>&lt;&lt; 8</code>, south = <code>&gt;&gt; 8</code>, east = <code>&lt;&lt; 1</code> masked with <code>~FILE_A</code> (to avoid wrap-around), west = <code>&gt;&gt; 1</code> &amp; <code>~FILE_H</code>.</li>
+<li>Pawn pushes for all pawns at once: <code>single = (pawns &lt;&lt; 8) &amp; empty</code>, <code>double = ((single &amp; RANK_3) &lt;&lt; 8) &amp; empty</code>.</li>
+<li><strong>Iterate pieces:</strong> <code>while (bb) { sq = ctz(bb); bb &amp;= bb - 1; }</code> (<code>__builtin_ctzll</code> / <code>std::countr_zero</code>, which pops the lowest set bit).</li>
+<li><code>popcount</code> for counting (material, mobility).</li>
+<li><strong>Leapers</strong> (knight, king, pawn attacks): precomputed lookup tables <code>KNIGHT_ATTACKS[64]</code>.</li>
+<li><strong>Sliders</strong> (bishop, rook, queen) depend on blockers:<ul>
+<li>Simple: loop ray by ray until you hit a piece ("classical approach" with ray tables + <code>ctz/clz</code> of blockers).</li>
+<li>Fast: <strong>Magic bitboards</strong>. <code>attacks = TABLE[sq][((occupied &amp; mask[sq]) * MAGIC[sq]) &gt;&gt; shift[sq]]</code>. A perfect-hash multiplication trick. Use known magic numbers (find your own with a random search later). On x86, <strong>PEXT</strong> (BMI2) does the same without magics. Your M2 has no PEXT, so use magics.</li>
+</ul>
+</li>
+</ul>
+<h3>Move encoding</h3>
+<p>16-bit move: from (6 bits) | to (6 bits) | flags (4 bits: quiet, double push, castle K/Q, capture, en-passant, 4 promotions × capture/non-capture). Compact, fast to copy.</p>
+<h3>Make / unmake</h3>
+<ul>
+<li><code>make_move</code> updates the bitboards, a mailbox <code>piece_on[64]</code> (keep both, since mailbox answers "what's on e4?" fast), castling rights, the ep square, clocks and the <strong>Zobrist hash</strong>. <code>unmake_move</code> restores. Or use <strong>copy-make</strong> (copy the whole ~200-byte state per ply), which is simpler, less bug-prone, and fast enough.</li>
+</ul>
+
+</div></details>
+<details class="sec" id="chess-engine-s2"><summary><span class="n">3</span><span class="h">Move generation and PERFT (the hardest 50%)</span></summary><div class="sb">
+<p><strong>Pseudo-legal</strong> generation (ignore self-check) + a legality check after making the move ("is my king attacked?") is the simplest correct approach. <strong>Fully legal</strong> generation (compute pins and check masks up front) is faster. Do pseudo-legal first.</p>
+<p><code>is_square_attacked(sq, by_color)</code>: the "super-piece" trick. From <code>sq</code>, generate knight attacks and see if they hit enemy knights, bishop attacks for enemy bishops/queens, rook attacks for rooks/queens, pawn attacks, king attacks.</p>
+<h3>PERFT: your correctness test harness</h3>
+<p><code>perft(depth)</code> = number of leaf nodes of the legal move tree. Compare with known values. <strong>If any number is off, you have a bug.</strong> Use <strong>"divide"</strong> (perft per root move) and compare against Stockfish's <code>go perft N</code> or python-chess to binary-search the bug.</p>
+<div class="tw"><table class="stack">
+<thead>
+<tr>
+<th>Position</th>
+<th>d1</th>
+<th>d2</th>
+<th>d3</th>
+<th>d4</th>
+<th>d5</th>
+<th>d6</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Start pos</td>
+<td>20</td>
+<td>400</td>
+<td>8,902</td>
+<td>197,281</td>
+<td>4,865,609</td>
+<td>119,060,324</td>
+</tr>
+<tr>
+<td><strong>Kiwipete</strong> <code>r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1</code></td>
+<td>48</td>
+<td>2,039</td>
+<td>97,862</td>
+<td>4,085,603</td>
+<td>193,690,690</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<p>Chess Programming Wiki's "Perft Results" page lists positions 3–6, which cover en-passant pins, promotions and castling-through-check. <strong>Pass them all before writing any search.</strong> Engines that skip this spend weeks chasing phantom search bugs that were actually move-gen bugs.</p>
+
+</div></details>
+<details class="sec" id="chess-engine-s3"><summary><span class="n">4</span><span class="h">Search</span></summary><div class="sb">
+<h3>Minimax → Negamax</h3>
+<ul>
+<li>Game tree: positions are nodes, moves are edges. Minimax: max player picks the max child, min player picks the min.</li>
+<li><strong>Negamax:</strong> <code>score(pos) = max over moves of −score(child)</code>. One function for both sides. Eval is always from the side-to-move's perspective.</li>
+<li>Branching factor in chess ≈ 35. Depth d costs 35^d nodes, so depth 6 ≈ 1.8 billion. Too many.</li>
+</ul>
+<h3>Alpha-beta pruning</h3>
+<ul>
+<li>Keep a window [α, β]: α = the best score we're guaranteed, β = the best the opponent allows. If a move scores ≥ β, the opponent would never let us get here, so <strong>cut off</strong> (fail-high).</li>
+<li>With <strong>perfect move ordering</strong>, nodes ≈ 35^(d/2). You search twice as deep for the same cost. <strong>So move ordering is everything.</strong></li>
+</ul>
+<div class="code"><button class="cp" type="button">Copy</button><pre><code>int negamax(pos, depth, alpha, beta):
+    if depth == 0: return quiescence(pos, alpha, beta)
+    for move in ordered_moves(pos):
+        make(move)
+        score = -negamax(pos, depth-1, -beta, -alpha)
+        unmake(move)
+        if score &gt;= beta: return beta          // fail-hard cutoff
+        alpha = max(alpha, score)
+    if no legal moves: return in_check ? -MATE + ply : 0
+    return alpha
+</code></pre></div>
+<h3>Essential additions, in the order to add them (measure Elo after each, see §7)</h3>
+<ol>
+<li><strong>Quiescence search:</strong> at depth 0, keep searching <strong>captures only</strong> (plus promotions) until the position is quiet. "Stand pat" = static eval as a lower bound. Fixes the <strong>horizon effect</strong> (e.g. QxP looks great at depth 0 because the recapture is past the horizon). The single biggest strength gain.</li>
+<li><strong>Move ordering:</strong> TT/hash move first → captures by <strong>MVV-LVA</strong> (Most Valuable Victim – Least Valuable Attacker: PxQ before QxP) or SEE (static exchange evaluation) → <strong>killer moves</strong> (quiet moves that caused cutoffs at the same ply) → <strong>history heuristic</strong> (quiet moves that caused cutoffs anywhere, weighted by depth²).</li>
+<li><strong>Iterative deepening:</strong> search depth 1, 2, 3… until time runs out. It sounds wasteful but is <em>faster</em> overall because each iteration seeds move ordering (PV move, TT) for the next. It also gives you a move at any time → time management.</li>
+<li><strong>Zobrist hashing:</strong> random 64-bit number per (piece, square), side to move, castling right and ep file. Position hash = XOR of the present ones. Updated incrementally in make/unmake (XOR in/out). Used for the TT and repetition detection.</li>
+<li><strong>Transposition table (TT):</strong> a hash table keyed by Zobrist that stores {hash, depth, score, <strong>bound type</strong>, best move}. Bound type: <strong>EXACT</strong> (α &lt; score &lt; β), <strong>LOWER</strong> (fail-high, score ≥ β), <strong>UPPER</strong> (fail-low, score ≤ α). Lookup can cut off immediately or give the best move for ordering. Replacement scheme: depth-preferred + always-replace bucket. Mate scores need ply adjustment when stored/loaded.</li>
+<li><strong>Principal Variation Search (PVS):</strong> search the first move with the full window, the rest with a <strong>null window</strong> (α, α+1) to just prove they're worse. Re-search if one surprises.</li>
+<li><strong>Null-move pruning:</strong> "if I pass and I'm <em>still</em> ≥ β at reduced depth (R = 2–3), this position is so good I can cut." Don't use it in check or in pawn endgames (<strong>zugzwang</strong>).</li>
+<li><strong>Late Move Reductions (LMR):</strong> moves late in the ordering are probably bad, so search them at reduced depth and re-search at full depth only if they beat α. Huge depth gain.</li>
+<li><strong>Aspiration windows:</strong> at the root, search a narrow window around the last iteration's score. Re-search wider on failure.</li>
+<li>Later: check extensions, futility pruning, reverse futility (static null move), late move pruning, SEE pruning in qsearch, singular extensions. One at a time, each tested.</li>
+</ol>
+<p><strong>Repetition &amp; 50-move</strong> detection in search: keep a stack of hashes. Treat the first repetition inside the search as a draw.</p>
+<h3>Time management</h3>
+<p>Simple: <code>time_for_move = remaining/30 + increment/2</code>. Stop iterative deepening when the next iteration likely won't finish. Check the clock every ~2048 nodes.</p>
+
+</div></details>
+<details class="sec" id="chess-engine-s4"><summary><span class="n">5</span><span class="h">Evaluation</span></summary><div class="sb">
+<h3>Classical (hand-crafted, "HCE")</h3>
+<ul>
+<li><strong>Material:</strong> P=100, N=320, B=330, R=500, Q=900 (centipawns).</li>
+<li><strong>Piece-square tables (PST):</strong> bonus/penalty per piece per square (knights in the centre good, on the rim bad, etc.).</li>
+<li><strong>Tapered eval:</strong> separate middlegame and endgame tables, blended by a <strong>game phase</strong> derived from remaining non-pawn material. The king hides in the middlegame and centralizes in the endgame.</li>
+<li><strong>PeSTO tables:</strong> published tuned midgame/endgame PSTs (CPW "PeSTO's Evaluation Function"). Material + PeSTO tapered PST alone ≈ a surprisingly strong engine (~2000+ with decent search).</li>
+<li>More terms: mobility, pawn structure (doubled/isolated/<strong>passed pawns</strong>), bishop pair, rooks on open files, king safety (pawn shield, attackers near king).</li>
+<li><strong>Texel tuning:</strong> fit all eval weights by minimizing the MSE between <code>sigmoid(eval)</code> and actual game results over millions of positions. <strong>This is logistic regression / gradient descent</strong>, so it's your ML skillset.</li>
+</ul>
+<h3>NNUE (Efficiently Updatable Neural Network): modern eval, your sweet spot</h3>
+<ul>
+<li>Input: sparse one-hot features. Simplest form is <strong>768 inputs</strong> = 2 colours × 6 pieces × 64 squares (Stockfish uses king-relative "HalfKA"-style features).</li>
+<li>Architecture (simple, effective): <code>768 → 256 (accumulator, per perspective) → concat 512 → 1</code>, <strong>clipped ReLU / SCReLU</strong> activation.</li>
+<li><strong>The trick:</strong> the first layer is huge but inputs change by only 2–4 features per move, so you <strong>incrementally update</strong> the accumulator: add/subtract weight columns on make/unmake instead of a full matmul. That's what makes the "EU" in NNUE.</li>
+<li><strong>Quantized int16/int8 inference</strong> with SIMD. Same skills as your neural accelerator project.</li>
+<li>Training data: generate positions by self-play with your own engine (eval targets = search scores + game results), then train in PyTorch (or <strong>bullet</strong>, the Rust NNUE trainer most hobby engines use). A first net typically gains hundreds of Elo over HCE.</li>
+</ul>
+<h3>AlphaZero-style (MCTS + policy/value net): what your README dreams of</h3>
+<ul>
+<li><strong>MCTS</strong> with <strong>PUCT</strong> selection: pick the child maximizing <code>Q(s,a) + c·P(s,a)·√N(s)/(1+N(s,a))</code>. Expand a leaf → the neural net gives <strong>policy P</strong> (move priors) and <strong>value v</strong> (expected outcome) → back up v. No alpha-beta and no handcrafted eval.</li>
+<li>Training loop: self-play with MCTS → (position, MCTS visit distribution, game result) → train the net (cross-entropy on policy + MSE on value) → repeat.</li>
+<li>Reality check: AlphaZero used thousands of TPUs. <strong>Leela Chess Zero</strong> took years of distributed community compute. On an M2 in a month, pure self-play from zero won't get strong.</li>
+<li>Feasible version: <strong>supervised</strong> pretraining on Lichess games / Stockfish-labelled positions (a small ResNet or transformer, policy + value heads), then MCTS on top. It can reach a level that beats casual humans (≈ you!), and it's a fantastic ML project. Treat it as <strong>phase 2 / next semester</strong>, after the alpha-beta engine works.</li>
+<li>Interview gold: <em>why did NNUE + alpha-beta (Stockfish) end up beating the pure AlphaZero approach in CPU-limited settings?</em> (Search depth × a cheap, accurate eval beats few nodes × an expensive eval when hardware is a CPU.)</li>
+</ul>
+
+</div></details>
+<details class="sec" id="chess-engine-s5"><summary><span class="n">6</span><span class="h">UCI protocol (how engines talk)</span></summary><div class="sb">
+<p>Text over stdin/stdout:</p>
+<div class="code"><button class="cp" type="button">Copy</button><pre><code>GUI → uci                     Engine → id name MyEngine / uciok
+GUI → isready                 Engine → readyok
+GUI → position startpos moves e2e4 e7e5
+GUI → go wtime 60000 btime 60000 winc 1000 binc 1000
+Engine → info depth 8 score cp 34 nodes 120000 nps 900000 pv g1f3 b8c6
+Engine → bestmove g1f3
+</code></pre></div>
+<p>Once UCI works: plug into <strong>Cute Chess / En Croissant / Arena</strong> GUIs, play vs other engines, deploy to Lichess with <strong>lichess-bot</strong>, and have your PyGame UI call it as a subprocess.</p>
+
+</div></details>
+<details class="sec" id="chess-engine-s6"><summary><span class="n">7</span><span class="h">Testing strength properly</span></summary><div class="sb">
+<ul>
+<li><strong>Never trust "it feels stronger."</strong> Engine devs run <strong>SPRT</strong> (sequential probability ratio test): play thousands of fast games (e.g. 10s+0.1s) new-vs-old using <strong>fastchess</strong> or <strong>cutechess-cli</strong> with an opening book. Accept a patch only if it's statistically better.</li>
+<li>Elo from a match score: <code>ΔElo = −400·log10(1/score − 1)</code>.</li>
+<li>Sanity suites: WAC (Win At Chess) tactical positions, mate-in-N puzzles.</li>
+<li>Benchmarks: nodes per second (nps), time to depth, perft speed.</li>
+</ul>
+
+</div></details>
+<details class="sec" id="chess-engine-s7"><summary><span class="n">8</span><span class="h">Build plan (suggested)</span></summary><div class="sb">
+<ol>
+<li>C++ bitboard board + FEN + move gen → <strong>perft passes all CPW positions</strong> (expect 3–5 days).</li>
+<li>Negamax + alpha-beta + material/PST eval + qsearch + MVV-LVA → UCI → it plays! (~2 days)</li>
+<li>Iterative deepening + TT + killers/history + PVS + null move + LMR + time management. SPRT each one.</li>
+<li>PeSTO tapered eval → Texel tuning (optional).</li>
+<li>NNUE: datagen → train in PyTorch → int16 incremental inference. (The ML-flavoured milestone.)</li>
+<li>Hook into your PyGame UI + lichess-bot. Report rating on Lichess (bot account) / CCRL-style gauntlet results.</li>
+<li>Phase 2 (later): MCTS + policy/value net version.</li>
+</ol>
+
+</div></details>
+<details class="sec" id="chess-engine-s8"><summary><span class="n">9</span><span class="h">Interview questions</span></summary><div class="sb">
+<ol>
+<li>Explain minimax and alpha-beta. Best-case node count? Why does move ordering matter?</li>
+<li>What's the horizon effect and how does quiescence search fix it?</li>
+<li>What's a transposition table? Why store bound types? What's a hash collision's impact?</li>
+<li>Zobrist hashing: why XOR? How is it updated incrementally?</li>
+<li>Bitboards: generate all white pawn single pushes in one line. How do magic bitboards work?</li>
+<li>Iterative deepening seems wasteful. Why is it actually faster?</li>
+<li>Null-move pruning: why does zugzwang break it?</li>
+<li>MCTS vs alpha-beta: when is each better? Explain PUCT and exploration vs exploitation.</li>
+<li>How does NNUE stay fast despite a big first layer?</li>
+<li>(General DSA link) Alpha-beta ≈ branch-and-bound. Game trees ≈ DFS with pruning. Zobrist ≈ hashing. TT ≈ cache/memoization. Interviewers like it when you connect these.</li>
+</ol>
+<p><strong>AI-era probes:</strong> "How did you know your move generator was correct?" (perft + divide vs Stockfish). "How do you know feature X helped?" (SPRT, with N games and the Elo ± error). "What did the NN learn? Did you try ablations?"</p>
+
+</div></details>
+<details class="sec" id="chess-engine-s9"><summary><span class="n">10</span><span class="h">Resources (priority order)</span></summary><div class="sb">
+<p><strong>Videos (start here for intuition)</strong></p>
+<ol>
+<li><strong>Sebastian Lague, "Coding Adventure: Chess"</strong> and <strong>"Coding Adventure: Making a Better Chess Bot"</strong> (YouTube). The most beginner-friendly overview of the whole pipeline (board, move gen, search, eval, bugs he hit). Watch both on day 1, ~1.5 h total.</li>
+<li><strong>Bluefever Software, "Programming a Chess Engine in C" (VICE series, YouTube, ~80 short videos)</strong>. Old but complete, a step-by-step 10×12 mailbox engine. Use it as a reference for TT/search/UCI videos.</li>
+<li><strong>Code Monkey King, "Bitboard CHESS ENGINE in C" (BBC series, YouTube)</strong>. Bitboards + magic bitboards explained line by line. Watch the magic-bitboard episodes when you get there.</li>
+</ol>
+<p><strong>Written (reference)</strong></p>
+<ol start="4">
+<li><strong>Chess Programming Wiki (chessprogramming.org)</strong>. The bible. Read these pages: <em>Getting Started</em>, <em>Bitboards</em>, <em>General Setwise Operations</em>, <em>Magic Bitboards</em>, <em>Perft</em>, <em>Perft Results</em>, <em>Zobrist Hashing</em>, <em>Negamax</em>, <em>Alpha-Beta</em>, <em>Quiescence Search</em>, <em>MVV-LVA</em>, <em>Killer Heuristic</em>, <em>History Heuristic</em>, <em>Iterative Deepening</em>, <em>Transposition Table</em>, <em>Principal Variation Search</em>, <em>Null Move Pruning</em>, <em>Late Move Reductions</em>, <em>PeSTO's Evaluation Function</em>, <em>Tapered Eval</em>, <em>Texel's Tuning Method</em>, <em>NNUE</em>, <em>UCI</em>. It's dense: read the page when you're about to implement that feature, not all upfront.</li>
+<li><strong>Rustic chess engine book (rustic-chess.org)</strong>. A well-written book-style walkthrough of building an engine (board, move gen, search, testing). Excellent even if you write C++.</li>
+<li><strong>Lichess blog by likeawizard, "How to build a chess engine" series</strong>. A beginner's guide plus posts on bitboards and search trees.</li>
+<li><strong>official-stockfish/nnue-pytorch, <code>docs/nnue.md</code> (GitHub)</strong>. The definitive NNUE explainer (feature sets, accumulators, quantization). Read when you reach NNUE.</li>
+<li><strong>AlphaZero paper: Silver et al., "A general reinforcement learning algorithm that masters chess, shogi, and Go through self-play" (Science 2018)</strong> + the <strong>Leela Chess Zero docs/blog</strong> for the practical version.</li>
+</ol>
+<p><strong>Tools</strong></p>
+<ul>
+<li><strong>python-chess</strong>: generate test positions, perft-divide against it, run quick matches.</li>
+<li><strong>Stockfish</strong> (<code>go perft N</code>) for the divide comparisons.</li>
+<li><strong>fastchess / cutechess-cli</strong> for SPRT. <strong>lichess-bot</strong> for deployment.</li>
+<li>Community: r/chessprogramming, <strong>Engine Programming Discord / Stockfish Discord</strong> (the most active place for help).</li>
+</ul>
+
+</div></details>
+<details class="sec" id="chess-engine-s10"><summary><span class="n">11</span><span class="h">Metrics / resume line</span></summary><div class="sb">
+<blockquote>
+<p>"C++ chess engine: magic bitboards (perft-verified on all CPW suites, X M nps), PVS alpha-beta with TT/null-move/LMR, NNUE evaluation trained on Y M self-generated positions in PyTorch with incremental int16 inference (+Z Elo over HCE, SPRT-verified). ~N Elo on Lichess as a bot."</p>
+</blockquote></div></details></div></section>
+<section class="view" id="v-codeforces-dsa" hidden><div class="band phead"><a class="back" href="#home">← All tracks</a><h2 class="pt">Codeforces 1330 → 1600+ and Interview DSA</h2><div class="lead"><blockquote>
+<p>Two related but different goals:
+1. <strong>Codeforces rating</strong> (contest skill: speed, observations, math, constructive thinking).
+2. <strong>Placement/internship DSA</strong> (OA + interview: standard patterns, clean code, explaining your approach, LeetCode-style).</p>
+<p>At 1330 (Pupil), the honest bottleneck is usually <strong>solving Div2 B/C quickly and reliably</strong>, not knowing advanced algorithms. Target for this month: <strong>consistent 1500–1600 performance</strong> (Specialist). Realistic if you do ~1.5–2 h/day plus every contest you can.</p>
+</blockquote>
+
+</div><div class="tools"><input type="search" class="q" placeholder="Search this track" aria-label="Search Codeforces / DSA"><button type="button" class="ex">Expand all</button></div></div><div class="band secs"><details class="sec" id="codeforces-dsa-s0"><summary><span class="n">1</span><span class="h">What separates 1300 from 1600</span></summary><div class="sb">
+<div class="tw"><table class="stack">
+<thead>
+<tr>
+<th>At ~1300</th>
+<th>At ~1600</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Solves A, B sometimes slowly, C rarely</td>
+<td>A+B in ~20–25 min, C regularly, sometimes D</td>
+</tr>
+<tr>
+<td>Codes the first idea</td>
+<td>Proves/greedy-checks the idea on small cases first</td>
+</tr>
+<tr>
+<td>WA → stares at code</td>
+<td>WA → writes a brute force + random tests (stress testing)</td>
+</tr>
+<tr>
+<td>Knows algorithms by name</td>
+<td>Recognizes <em>which</em> trick a problem wants (binary search on answer, prefix sums, parity, sorting + greedy)</td>
+</tr>
+<tr>
+<td>Gets stuck on math</td>
+<td>Comfortable with gcd/mod/parity/basic combinatorics</td>
+</tr>
+</tbody>
+</table></div>
+<p>Most Div2 B/C problems at 1200–1600 are <strong>observation + greedy/constructive + simple math</strong>, not heavy data structures.</p>
+
+</div></details>
+<details class="sec" id="codeforces-dsa-s1"><summary><span class="n">2</span><span class="h">Topic list (in order of ROI for 1300 → 1600)</span></summary><div class="sb">
+<p><strong>Tier 1: must be automatic</strong></p>
+<ol>
+<li><strong>Sorting + greedy</strong> (exchange argument: "why is swapping two adjacent choices never better?")</li>
+<li><strong>Prefix sums</strong> (1D, 2D, difference arrays for range updates), prefix XOR</li>
+<li><strong>Two pointers / sliding window</strong></li>
+<li><strong>Binary search</strong>, especially <strong>binary search on the answer</strong> (monotonic predicate: "can we achieve ≥ x?")</li>
+<li><strong>Math basics:</strong> parity arguments, gcd/lcm, divisors in O(√n), <strong>sieve</strong>, prime factorization, <strong>modular arithmetic</strong> (mod 1e9+7, binary exponentiation, modular inverse via Fermat), nCr with precomputed factorials</li>
+<li><strong>Constructive problems</strong> ("output any array such that…"): try small n by hand, look for a pattern</li>
+<li><strong>Bit manipulation:</strong> XOR properties, checking bits, subsets via bitmask, <code>__builtin_popcount</code></li>
+<li><strong>Strings basics:</strong> frequency counts, palindromes, two-pointer on strings</li>
+<li>STL fluency in C++: <code>sort</code> with lambdas, <code>map</code>/<code>set</code> + <code>lower_bound</code>, <code>priority_queue</code>, <code>multiset</code>, <code>pair</code>/<code>tuple</code></li>
+</ol>
+<p><strong>Tier 2: needed for C/D at 1400–1700</strong></p>
+<ol start="10">
+<li><strong>Graphs:</strong> BFS (shortest path unweighted, multi-source), DFS (components, cycle detection), <strong>0-1 BFS</strong>, <strong>Dijkstra</strong>, topological sort, bipartite check</li>
+<li><strong>Trees:</strong> DFS on trees, subtree sizes, depth, tree diameter (two BFS), rerooting (intro)</li>
+<li><strong>DSU (disjoint set union)</strong> with path compression + union by size</li>
+<li><strong>DP basics:</strong> 1D/2D DP, knapsack, LIS (O(n log n)), grid paths, DP on subsequences, simple bitmask DP, <strong>DP state design</strong> (the real skill)</li>
+<li><strong>Stacks/monotonic stack</strong> (next greater element), <strong>deques</strong> (sliding-window max)</li>
+<li>Hashing / <code>map</code> tricks (count pairs with property, frequency of differences <code>a[i] - i</code>)</li>
+<li>Interactive problems (binary search with queries). They appear in Div2 B/C.</li>
+</ol>
+<p><strong>Tier 3: for 1700+ / next semester</strong>
+Segment tree (+ lazy), Fenwick tree, LCA (binary lifting), sparse tables, string hashing / KMP / Z-function, combinatorics &amp; inclusion-exclusion, game theory (Grundy), digit DP, MST (Kruskal/Prim), shortest paths (Bellman-Ford, Floyd-Warshall).</p>
+<h3>Interview-DSA topics that CF under-practices (add these)</h3>
+<ul>
+<li><strong>Linked lists</strong> (reverse, cycle detection with Floyd, merge, LRU cache = hashmap + doubly linked list)</li>
+<li><strong>Trees as objects</strong> (BST validation, traversals iterative, LCA in a BST, serialize/deserialize)</li>
+<li><strong>Heaps</strong> (top-k, merge k sorted lists, median of a stream with two heaps)</li>
+<li><strong>Tries</strong> (prefix search, max XOR pair)</li>
+<li><strong>Backtracking</strong> (subsets, permutations, N-queens, word search)</li>
+<li><strong>Intervals</strong> (merge, meeting rooms)</li>
+<li><strong>Design problems</strong> (LRU/LFU cache, rate limiter, iterator design)</li>
+<li><strong>Complexity analysis out loud</strong>, plus clean, readable code (variable names matter in interviews, not in contests)</li>
+</ul>
+
+</div></details>
+<details class="sec" id="codeforces-dsa-s2"><summary><span class="n">3</span><span class="h">The daily routine (≈ 1.5–2 h, every day of the break)</span></summary><div class="sb">
+<div class="tw"><table class="stack">
+<thead>
+<tr>
+<th>Block</th>
+<th>Time</th>
+<th>What</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Warm-up</td>
+<td>15 min</td>
+<td>1 problem at <strong>~1200</strong> (speed + accuracy, solve in &lt; 15 min)</td>
+</tr>
+<tr>
+<td>Main</td>
+<td>60–75 min</td>
+<td><strong>2 problems at 1400–1600</strong>. ~30–40 min honest attempt each. Stuck → read the <strong>hint/editorial, then close it and code it yourself</strong>.</td>
+</tr>
+<tr>
+<td>Upsolve / review</td>
+<td>15–20 min</td>
+<td>Write a 2–3 line note per problem: <em>the key observation</em> + the pattern tag. (This "observation log" is the most underrated habit.)</td>
+</tr>
+</tbody>
+</table></div>
+<p>Weekly:</p>
+<ul>
+<li><strong>Every Codeforces round you can</strong> (Div2/Div3/Div4, Educational). If a round clashes, do a <strong>virtual contest</strong> of an older round under timed conditions. <strong>2–3 contests/virtuals per week.</strong></li>
+<li>After each contest: <strong>upsolve the first problem you couldn't solve.</strong> That problem is your exact growth edge.</li>
+<li><strong>AtCoder Beginner Contest (ABC)</strong> on Saturdays: excellent, clean problems for C–E at your level.</li>
+<li><strong>1–2 interview-style problems/day</strong> in the last week before the semester (Striver/NeetCode, see resources).</li>
+</ul>
+<p>Rules of thumb (from the CF community):</p>
+<ul>
+<li>Practice at <strong>your rating +100 to +300</strong> (so 1400–1600 now). Mostly-1000 problems feel productive but don't move the rating.</li>
+<li>Look at the editorial after <strong>20–30 min of being genuinely stuck</strong> (Errichto's advice), not 2 hours and not 2 minutes.</li>
+<li><strong>Use the problemset filter by rating + tag</strong>, but solve some <strong>untagged</strong> problems too (in contests nobody tells you the tag).</li>
+<li>Track performance per contest, not just rating: if you get 1600 <em>performance</em> consistently, the rating follows.</li>
+</ul>
+<h3>Stress testing (learn this in week 1, it saves contests)</h3>
+<p>Write <code>brute.cpp</code> (obviously correct, slow), <code>gen.py</code> (random small input) and a shell loop that compares outputs until they differ. Then debug on the tiny failing input. This is also exactly how you'll verify your order book, chess engine and RTL (golden-model testing).</p>
+<h3>Contest-day template</h3>
+<ul>
+<li>Read A, B (and C) fully before coding. Check constraints → target complexity (n ≤ 2e5 means O(n log n); n ≤ 5000 means O(n²); n ≤ 20 means 2ⁿ).</li>
+<li>Edge cases: n = 1, all equal, negatives, <code>long long</code> overflow (<strong>use <code>long long</code> whenever products/sums can exceed 2e9</strong>), multiple test cases (<strong>reset globals!</strong>, sum of n constraint).</li>
+<li>Fast IO: <code>ios::sync_with_stdio(false); cin.tie(nullptr);</code></li>
+</ul>
+
+</div></details>
+<details class="sec" id="codeforces-dsa-s3"><summary><span class="n">4</span><span class="h">Interviews &amp; OAs in the AI era (what changed)</span></summary><div class="sb">
+<ul>
+<li><strong>OAs</strong> (HackerRank/HackerEarth/Codility/Mettl) are the first filter at almost every company visiting IITs for internships. Typically 2–4 problems in 60–90 min, at roughly <strong>CF 1200–1800 level</strong> (quant/HFT and top product firms at the upper end). Proctoring now commonly includes webcam, tab-switch detection and <strong>AI-similarity checks</strong>, so solutions that look LLM-generated get flagged. Your own speed is what counts.</li>
+<li><strong>Codeforces itself restricts AI tool usage during rated rounds</strong> (rules updated since 2024, so read the current rule post). Respect it. Your rating is a credential, and AI-assisted ratings get rolled back.</li>
+<li><strong>Live interviews</strong> ask you to talk through brute force → better → optimal, state complexity, write clean code, and dry-run a test. Some companies now let you use AI but grade how you <strong>spec, test, and critique</strong> its output. Practice explaining <em>why</em> a solution is correct (an invariant or exchange argument), not just that it passes.</li>
+<li><strong>Quant/HFT firms</strong> (Graviton, Quadeye, Tower, Optiver, APT, NK Securities, AlphaGrep, Jane Street, Citadel) add <strong>probability/puzzles/mental math</strong> rounds. Resources: <em>Heard on the Street</em> (Crack), <em>50 Challenging Problems in Probability</em> (Mosteller), <em>A Practical Guide to Quantitative Finance Interviews</em> (Xinfeng Zhou), Ch. 2–4. Worth starting next semester, since it pairs with your order book/FPGA projects.</li>
+</ul>
+
+</div></details>
+<details class="sec" id="codeforces-dsa-s4"><summary><span class="n">5</span><span class="h">Resources (priority order)</span></summary><div class="sb">
+<p><strong>Practice sets (pick ONE main structured set + CF contests)</strong></p>
+<ol>
+<li><strong>CP-31 sheet (TLE Eliminators)</strong>: 31 curated Codeforces problems per rating band (800 → 1900). Popular among Indian students for exactly your situation. Finish the <strong>1300, 1400, 1500</strong> bands this month (~93 problems). Free.</li>
+<li><strong>CSES Problem Set (cses.fi/problemset)</strong>: classic problems per topic. Do: <em>Introductory</em> (selectively), <em>Sorting and Searching</em> (most of it, high ROI), <em>Dynamic Programming</em> (first ~12), <em>Graph Algorithms</em> (first ~10).</li>
+<li><strong>USACO Guide (usaco.guide)</strong>: <strong>Silver</strong> section (prefix sums, two pointers, binary search, greedy with sorting, DFS/BFS, floodfill, intro to trees), then <strong>Gold</strong> (DP, DSU, shortest paths, topo sort). Each module has explanations + graded problems. Best structured <em>learning</em> resource.</li>
+<li><strong>TheScrasse's "CF Roadmap"</strong> (Codeforces blog, search the title): ~100 problems from AtCoder/CF aimed at reaching blue. A good alternative to CP-31.</li>
+<li><strong>AtCoder Beginner Contests</strong> (atcoder.jp). Practice C/D/E of past ABCs via AtCoder Problems (kenkoooo.com/atcoder) with difficulty colours.</li>
+</ol>
+<p><strong>Learning / reference</strong></p>
+<ol start="6">
+<li><strong>Antti Laaksonen, <em>Competitive Programmer's Handbook</em></strong> (free PDF; the CSES author). Ch. 3 (sorting), 4 (data structures), 5 (complete search), 6 (greedy), 7 (DP), 8 (amortized analysis, i.e. two pointers), 11–13 (graphs basics), 14 (tree algorithms), 15 (spanning trees), 21–22 (number theory, combinatorics). Compact and excellent.</li>
+<li><strong>CP-Algorithms (cp-algorithms.com)</strong>: the reference for any specific algorithm (binary exponentiation, sieve, modular inverse, DSU, Dijkstra, segment tree).</li>
+<li><strong>YouTube:</strong> <strong>Errichto</strong> (problem-solving process, binary search, DP), <strong>Colin Galen</strong> (mindset, "how to practice", greedy/observations), <strong>Priyansh Agarwal</strong> and <strong>TLE Eliminators</strong> (Indian context, CF editorial-style), <strong>William Lin</strong> (contest screencasts, good for seeing speed).</li>
+<li><strong>Codeforces EDU section</strong> (codeforces.com/edu): interactive courses on <strong>binary search</strong>, <strong>two pointers</strong>, DSU, segment trees, with practice problems. The binary search and two pointers courses are perfect for Tier 1.</li>
+</ol>
+<p><strong>Interview DSA (last week of break + next semester)</strong></p>
+<ol start="10">
+<li><strong>Striver's A2Z DSA sheet</strong> (takeuforward.org) or <strong>NeetCode 150</strong> (neetcode.io, with video explanations). Pick one. Do the linked list, tree, heap, trie, backtracking and design sections, which CF doesn't cover.</li>
+<li><strong>LeetCode weekly/biweekly contests</strong>: good OA simulation (timed, interview-style).</li>
+</ol>
+
+</div></details>
+<details class="sec" id="codeforces-dsa-s5"><summary><span class="n">6</span><span class="h">30-day plan</span></summary><div class="sb">
+<div class="tw"><table class="stack">
+<thead>
+<tr>
+<th>Week</th>
+<th>Focus</th>
+<th>Targets</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Tier 1: sorting/greedy, prefix sums, two pointers, <strong>binary search on answer</strong>, stress testing setup</td>
+<td>CF EDU binary search + two pointers (steps 1–2), CP-31 1300 band, 2–3 contests</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Math (mod, sieve, nCr, gcd), constructive, bits</td>
+<td>CP-31 1300 done + 1400 half, CSES Sorting &amp; Searching, 2–3 contests</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Graphs (BFS/DFS/Dijkstra/topo/DSU), trees</td>
+<td>USACO Silver graph modules, CP-31 1400 done, 2–3 contests</td>
+</tr>
+<tr>
+<td>4</td>
+<td>DP basics + interview topics (linked list, heap, trie, LRU)</td>
+<td>CSES DP first 10, CP-31 1500 half, Striver/NeetCode linked-list + heap sections, 2–3 contests</td>
+</tr>
+</tbody>
+</table></div>
+<p>Track everything in <code>codeforces_dsa/log.md</code>: date, problem, rating, solved/not, time, key observation. After 30 days you'll have ~100 logged problems and a clear map of weak tags.</p>
+
+</div></details>
+<details class="sec" id="codeforces-dsa-s6"><summary><span class="n">7</span><span class="h">Self-check: you're ready for 1600 when you can</span></summary><div class="sb">
+<ul>
+<li>Explain why binary search on the answer works and write it bug-free (lo/hi invariants) in 3 minutes</li>
+<li>Compute nCr mod p for n ≤ 2e5 in O(1) per query after O(n) precomputation</li>
+<li>Write BFS, DFS, Dijkstra and DSU from memory without bugs</li>
+<li>Solve a Div2 B within 15 minutes ~80% of the time</li>
+<li>Stress-test a WA solution in &lt; 5 minutes</li>
+</ul></div></details></div></section>
+<section class="view" id="v-vector-db" hidden><div class="band phead"><a class="back" href="#home">← All tracks</a><h2 class="pt">Vector Database</h2><div class="lead"><blockquote>
+<p>Goal: a small but real vector database in C++ (or Rust): brute-force + <strong>HNSW</strong> + <strong>IVF-PQ</strong> indexes, a SIMD distance kernel, metadata filtering, persistence (WAL + snapshots / mmap), and a tiny HTTP/gRPC or Python API. It's benchmarked on SIFT1M / GloVe with recall-vs-QPS curves against FAISS / hnswlib.</p>
+</blockquote>
+<p>Why it fits you: you've built LLMs and a RAG system (Vaani Board). This is the infrastructure underneath RAG. It reads well for ML-infra, backend and systems roles, and it's a natural system-design topic in AI-era interviews ("design semantic search for 1B documents").</p>
+
+</div><div class="tools"><input type="search" class="q" placeholder="Search this track" aria-label="Search Vector database"><button type="button" class="ex">Expand all</button></div></div><div class="band secs"><details class="sec" id="vector-db-s0"><summary><span class="n">1</span><span class="h">Foundations</span></summary><div class="sb">
+<h3>Embeddings</h3>
+<ul>
+<li>An encoder maps text/images to vectors in ℝᵈ (d = 384, 768, 1024, 1536, 3072…) so that semantic similarity ≈ geometric closeness. Examples: sentence-transformers, OpenAI/Cohere/Voyage embeddings, CLIP for images.</li>
+<li><strong>Matryoshka embeddings:</strong> the first k dims are themselves a usable embedding, so you can truncate to trade accuracy for memory.</li>
+<li>A vector DB stores (id, vector, metadata) and answers: <em>given query q, return the k ids with the smallest distance.</em></li>
+</ul>
+<h3>Distance metrics</h3>
+<div class="tw"><table class="stack">
+<thead>
+<tr>
+<th>Metric</th>
+<th>Formula</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L2 (Euclidean)</td>
+<td>‖x − q‖²</td>
+<td>Skip the sqrt for ranking</td>
+</tr>
+<tr>
+<td>Inner product (IP)</td>
+<td>−x·q</td>
+<td>"MIPS". Not a true metric (no triangle inequality).</td>
+</tr>
+<tr>
+<td>Cosine</td>
+<td>1 − x·q/(‖x‖‖q‖)</td>
+<td><strong>Normalize at insert → cosine == IP.</strong> Do this.</td>
+</tr>
+<tr>
+<td>Hamming</td>
+<td>popcount(x XOR q)</td>
+<td>For binary-quantized vectors</td>
+</tr>
+<tr>
+<td>Identity worth knowing: ‖x−q‖² = ‖x‖² + ‖q‖² − 2x·q. So batched L2 search = a <strong>matrix multiply</strong> (GEMM) + norms, which is how FAISS does brute force on GPUs.</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<h3>Exact kNN (brute force, "Flat" index)</h3>
+<ul>
+<li>O(N·d) per query. With SIMD (NEON on your M2, AVX2/AVX-512 on x86) and a <strong>top-k heap</strong> (max-heap of size k), 1M × 128-d is ~tens of ms per query on one core.</li>
+<li><strong>Always build Flat first.</strong> It's your ground truth for recall.</li>
+</ul>
+<h3>The curse of dimensionality</h3>
+<ul>
+<li>In high d, distances concentrate (nearest and farthest neighbours become nearly equidistant), and space-partitioning trees (KD-tree, ball tree) degrade to brute force beyond ~20 dims.</li>
+<li>So we use <strong>approximate</strong> NN (ANN): trade a bit of recall for orders-of-magnitude speed.</li>
+</ul>
+<h3>Metrics for ANN</h3>
+<ul>
+<li><strong>Recall@k</strong> = |ANN top-k ∩ exact top-k| / k. <strong>QPS</strong> (queries/sec), <strong>latency p50/p99</strong>, <strong>build time</strong>, <strong>memory per vector</strong>, <strong>update/delete support</strong>.</li>
+<li>The standard visualization is a <strong>recall-vs-QPS Pareto curve</strong> while sweeping a search parameter (efSearch, nprobe). This plot is your project's money shot.</li>
+</ul>
+
+</div></details>
+<details class="sec" id="vector-db-s1"><summary><span class="n">2</span><span class="h">ANN index families</span></summary><div class="sb">
+<h3>2.1 Hashing: LSH (know it, don't build it)</h3>
+<p>Random hyperplanes (SimHash) map similar vectors to the same bucket with high probability. Simple and theoretically clean, but it needs many tables for good recall. Mostly obsolete for dense embeddings and mostly appears as an interview question.</p>
+<h3>2.2 Clustering: IVF (Inverted File index)</h3>
+<ol>
+<li>Train <strong>k-means</strong> on a sample to get <code>nlist</code> centroids (e.g. √N to 4√N).</li>
+<li>Each vector goes into the list ("posting list") of its nearest centroid.</li>
+<li>Query: find the <code>nprobe</code> nearest centroids, then scan only those lists.
+- Knobs: <code>nlist</code> (more = smaller lists, but more centroid comparisons), <code>nprobe</code> (more = higher recall, slower).
+- Failure mode: a query near a cluster boundary has true neighbours in an unprobed list, which is why nprobe &gt; 1.</li>
+</ol>
+<h3>2.3 Quantization: compressing vectors</h3>
+<ul>
+<li><strong>Scalar quantization (SQ8):</strong> float32 → int8 per dimension (min/max per dim). 4× smaller, small recall loss. Same idea as LLM int8 quantization, which you know.</li>
+<li><strong>Binary quantization:</strong> sign bit per dim → 32× smaller, Hamming distance via popcount. Use it for a fast first pass, then <strong>rerank</strong> with full vectors.</li>
+<li><strong>Product Quantization (PQ)</strong> (<em>read this paper</em>):<ul>
+<li>Split d dims into <strong>m subspaces</strong> (e.g. 128-d → m=16 × 8-d).</li>
+<li>Run k-means in each subspace with <strong>256 centroids</strong> → each sub-vector becomes a 1-byte code. A 128-d float vector (512 B) → <strong>16 bytes</strong>.</li>
+<li><strong>ADC (asymmetric distance computation):</strong> for a query, precompute a table <code>T[m][256]</code> of distances from each query sub-vector to every sub-centroid. Distance to any database vector = <strong>m table lookups + adds</strong>. That's the trick that makes PQ fast.</li>
+<li><strong>IVF-PQ:</strong> IVF for coarse partitioning + PQ-encode the <strong>residual</strong> (vector − centroid). The workhorse of billion-scale search.</li>
+<li>OPQ: learn a rotation first so subspaces are balanced. Know it exists.</li>
+<li>Modern twist: <strong>fast-scan PQ</strong> with 4-bit codes and SIMD shuffle lookups (FAISS <code>PQFastScan</code>, Google ScaNN's anisotropic quantization).</li>
+</ul>
+</li>
+</ul>
+<h3>2.4 Graphs: HNSW (<strong>the main thing to build</strong>)</h3>
+<ul>
+<li><strong>Navigable small world (NSW):</strong> each vector is a node connected to ~M near neighbours. Search = <strong>greedy best-first walk</strong> from an entry point toward the query, keeping a candidate priority queue of size <code>ef</code>.</li>
+<li><strong>Hierarchical NSW:</strong> like a <strong>skip list</strong> over graphs. Each node gets a random max level <code>l = floor(−ln(U) · mL)</code> with <code>mL = 1/ln(M)</code>. Upper layers are sparse "highways", layer 0 has everything.</li>
+<li><strong>Search:</strong> start at the top-layer entry point, greedy-descend with ef=1 to layer 1, then at layer 0 run the beam search with <code>ef = efSearch</code>, and return the top k.</li>
+<li><strong>Insert:</strong> pick the level, search down to find <code>efConstruction</code> candidates per layer, connect to M of them using the <strong>neighbour-selection heuristic</strong> (keep a candidate only if it's closer to the new node than to any already-selected neighbour, which spreads edges in diverse directions), add reverse edges, and prune neighbours exceeding <code>M_max</code> (layer 0 uses <code>2M</code>).</li>
+<li>Knobs: <code>M</code> (graph degree, 16–64), <code>efConstruction</code> (100–500, build quality), <code>efSearch</code> (query-time recall/speed dial).</li>
+<li><strong>Deletes are hard:</strong> use tombstones + skip at search time + periodic rebuild, or repair the neighbourhoods.</li>
+<li>Pros: best recall/QPS in RAM. Cons: memory-hungry (vectors + edges ≈ (d·4 + M·2·4) B per vector), slow-ish build, random access patterns (bad for disk).</li>
+</ul>
+<h3>2.5 Disk-based graphs: DiskANN / Vamana (know it)</h3>
+<p>Single-layer graph built with <strong>α-pruning</strong> (α &gt; 1 keeps longer edges), PQ codes in RAM for navigation, full vectors + adjacency on SSD, and a few SSD reads per hop. Billion-scale on one machine. Know the idea for system-design questions.</p>
+<h3>Which index when (interview gold)</h3>
+<div class="tw"><table class="stack">
+<thead>
+<tr>
+<th>Situation</th>
+<th>Pick</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&lt; 100k vectors</td>
+<td>Flat (brute force). Don't overthink it.</td>
+</tr>
+<tr>
+<td>Fits in RAM, need high recall, low latency</td>
+<td>HNSW</td>
+</tr>
+<tr>
+<td>Huge (100M–1B+), memory-constrained</td>
+<td>IVF-PQ (+ rerank)</td>
+</tr>
+<tr>
+<td>Billions, SSD available</td>
+<td>DiskANN</td>
+</tr>
+<tr>
+<td>Heavy filtering by metadata</td>
+<td>Filter-aware HNSW / partition by tenant / pre-filter + brute force if selective</td>
+</tr>
+<tr>
+<td>GPU available, batch queries</td>
+<td>GPU Flat or IVF (FAISS GPU, CAGRA)</td>
+</tr>
+</tbody>
+</table></div>
+
+</div></details>
+<details class="sec" id="vector-db-s2"><summary><span class="n">3</span><span class="h">The "database" part (what separates it from just an index)</span></summary><div class="sb">
+<div class="tw"><table class="stack">
+<thead>
+<tr>
+<th>Feature</th>
+<th>Concept</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Persistence</strong></td>
+<td>Write-ahead log (WAL): append every insert/delete, fsync, replay on crash. Periodic <strong>snapshots</strong> of the index. <strong>mmap</strong> the vector file so the OS pages it in.</td>
+</tr>
+<tr>
+<td><strong>Segments</strong></td>
+<td>LSM-like: new inserts go to a small mutable segment (Flat or small HNSW). Seal it when full, build a bigger index in the background, <strong>merge/compact</strong> segments and drop tombstones. This is how Milvus, Weaviate, Lucene and Qdrant work.</td>
+</tr>
+<tr>
+<td><strong>Metadata filtering</strong></td>
+<td><em>Pre-filter</em> (filter first → exact search on survivors, good when very selective), <em>post-filter</em> (ANN then drop, which can return &lt; k results), <em>in-filter</em> (skip non-matching nodes during HNSW traversal but still traverse them; graph connectivity breaks under very selective filters). Know all three and their failure modes.</td>
+</tr>
+<tr>
+<td><strong>Hybrid search</strong></td>
+<td>Combine BM25 (keyword, inverted index) + vector results with <strong>Reciprocal Rank Fusion</strong>: score = Σ 1/(60 + rank). Common in production RAG.</td>
+</tr>
+<tr>
+<td><strong>Concurrency</strong></td>
+<td>Many readers + one writer. Per-node locks in HNSW (hnswlib does this), or RCU/copy-on-write segments.</td>
+</tr>
+<tr>
+<td><strong>Distributed (design-level only)</strong></td>
+<td>Shard by id hash, query all shards (scatter-gather), merge top-k. Replicate for availability.</td>
+</tr>
+<tr>
+<td><strong>API</strong></td>
+<td><code>create_collection(dim, metric)</code>, <code>upsert(id, vec, meta)</code>, <code>delete(id)</code>, <code>search(q, k, filter, ef)</code>. Expose over HTTP (cpp-httplib / crow) or Python bindings (pybind11 / nanobind).</td>
+</tr>
+</tbody>
+</table></div>
+
+</div></details>
+<details class="sec" id="vector-db-s3"><summary><span class="n">4</span><span class="h">Performance engineering (where you'll learn the most)</span></summary><div class="sb">
+<ul>
+<li><strong>SIMD distance kernels:</strong> write L2/IP with NEON intrinsics (<code>vfmaq_f32</code>) on your M2, and compare against the auto-vectorized scalar loop. Look at the assembly (godbolt.org).</li>
+<li><strong>Memory layout:</strong> store vectors in one contiguous aligned array (SoA), not <code>vector&lt;vector&lt;float&gt;&gt;</code>. Store HNSW layer-0 adjacency in a flat fixed-size array per node (hnswlib's trick: vector + neighbours in one block, so one cache miss fetches both).</li>
+<li><strong>Prefetching</strong> (<code>__builtin_prefetch</code>) neighbours' vectors before computing distances during traversal.</li>
+<li><strong>Visited set:</strong> a reusable <code>vector&lt;uint16_t&gt;</code> with a generation counter instead of clearing a bitset per query.</li>
+<li><strong>Batching + multithreading</strong> for build and for batched queries.</li>
+<li>Your LLaMA MFU work transfers directly: flat search is memory-bandwidth-bound. Compute the roofline. Bytes/query = N·d·4.</li>
+</ul>
+
+</div></details>
+<details class="sec" id="vector-db-s4"><summary><span class="n">5</span><span class="h">Build plan</span></summary><div class="sb">
+<ol>
+<li>Data loader for <strong>SIFT1M</strong> (fvecs/ivecs format) and <strong>GloVe-100-angular</strong> from ann-benchmarks. Ground-truth neighbours come with the dataset.</li>
+<li>Flat index + SIMD + top-k heap → verify recall = 1.0.</li>
+<li>HNSW (insert + search + heuristic) → recall/QPS curve vs <strong>hnswlib</strong> on the same data.</li>
+<li>IVF (with your own k-means) → IVF-PQ with ADC lookup tables → compare against FAISS <code>IndexIVFPQ</code>.</li>
+<li>Persistence: WAL + snapshot + crash test (kill -9 mid-insert, then recover).</li>
+<li>Filtering + Python bindings + a demo: semantic search over arXiv abstracts or your own notes, embedded with a small sentence-transformer. A RAG demo using your own DB is a great README GIF.</li>
+</ol>
+
+</div></details>
+<details class="sec" id="vector-db-s5"><summary><span class="n">6</span><span class="h">Interview questions</span></summary><div class="sb">
+<p><strong>Concept</strong></p>
+<ol>
+<li>Why does a KD-tree fail for 768-d vectors?</li>
+<li>Cosine vs dot vs L2: when are they equivalent? Why normalize?</li>
+<li>Explain HNSW. Why the hierarchy? What do M, efConstruction and efSearch do? Time/space complexity (search ≈ O(log N) empirically)?</li>
+<li>Explain PQ. How many bytes per vector? Why is ADC fast? What's the recall cost?</li>
+<li>IVF: what happens with nprobe=1 for a query near a centroid boundary?</li>
+<li>How do you handle deletes in HNSW?</li>
+<li>Pre- vs post- vs in-filtering. What breaks with a filter matching 0.1% of data?</li>
+<li>How do you evaluate an ANN index? Draw the recall-QPS curve.</li>
+</ol>
+<p><strong>System design (very common now)</strong></p>
+<ol start="9">
+<li>Design a RAG system for 10M company documents: chunking, embedding model choice, index choice, metadata/ACL filtering, hybrid search, reranking (cross-encoder), freshness/updates, evaluation (recall@k on a labelled set, answer faithfulness).</li>
+<li>Scale to 1B vectors on a budget: IVF-PQ or DiskANN, sharding, memory math (1B × 768 × 4 B = 3 TB raw → PQ 64 B = 64 GB).</li>
+<li>Embeddings were updated to a new model. How do you migrate? (Re-embed everything, dual-write, A/B, since vectors from different models aren't comparable.)</li>
+<li>Do you even need a vector DB? (pgvector / a FAISS file / brute force for small N. Interviewers like this nuance.)</li>
+</ol>
+<p><strong>AI-era probes</strong></p>
+<ul>
+<li>"Show your recall-QPS curve vs hnswlib. Why is yours slower?" (Memory layout, prefetching, visited-set cost.)</li>
+<li>"How did you check your HNSW is correct?" (Recall vs Flat ground truth. Graph connectivity check: every node reachable from the entry point.)</li>
+</ul>
+
+</div></details>
+<details class="sec" id="vector-db-s6"><summary><span class="n">7</span><span class="h">Resources (priority order)</span></summary><div class="sb">
+<ol>
+<li><strong>Pinecone Learn, "Faiss: The Missing Manual"</strong> (pinecone.io/learn/series/faiss). Chapters: <em>Introduction to Similarity Search</em>, <em>Nearest Neighbor Indexes for Similarity Search</em> (Flat/LSH/HNSW/IVF overview), <em>Product Quantization</em>, <em>HNSW</em>, <em>Composite Indexes / IVF-PQ</em>. Best intuitive explanations with diagrams. Read these first (~4 h).</li>
+<li><strong>HNSW paper: Malkov &amp; Yashunin, "Efficient and robust approximate nearest neighbor search using Hierarchical Navigable Small World graphs"</strong> (arXiv 1603.09320). Read §4 and <strong>Algorithms 1–5</strong> (INSERT, SEARCH-LAYER, SELECT-NEIGHBORS-SIMPLE / HEURISTIC, K-NN-SEARCH). You implement directly from the pseudocode.</li>
+<li><strong>PQ paper: Jégou, Douze, Schmid, "Product Quantization for Nearest Neighbor Search"</strong> (IEEE TPAMI 2011). §II–IV (PQ, ADC vs SDC, IVFADC).</li>
+<li><strong>hnswlib source (github.com/nmslib/hnswlib), <code>hnswalg.h</code></strong>: ~1,000 lines, the cleanest production HNSW. Read it <em>after</em> your first version to see the memory layout tricks.</li>
+<li><strong>FAISS wiki (github.com/facebookresearch/faiss/wiki)</strong>: "Getting started", "Faiss indexes", "Guidelines to choose an index", "Indexing 1M vectors". Plus the 2024 paper "The Faiss library" (arXiv 2401.08281) for the design rationale.</li>
+<li><strong>antirez (Redis creator), blog post on implementing HNSW from scratch in C for Redis Vector Sets</strong> (antirez.com/news/156). Practical engineering decisions (deletes, quantization, memory) from someone who did exactly this project.</li>
+<li><strong>"What's the story with HNSW?"</strong> (Towards Data Science) and <strong>"Building an HNSW Index From Scratch in C++"</strong> (Towards AI). Two complementary walkthroughs if the paper feels dense.</li>
+<li><strong>ann-benchmarks.com + github.com/erikbern/ann-benchmarks</strong>: datasets (SIFT, GloVe, GIST) with ground truth, and reference recall/QPS plots to compare against.</li>
+<li><strong>DiskANN paper: Subramanya et al., NeurIPS 2019</strong> (§2–3, Vamana). Read only for system-design depth.</li>
+<li><strong>CMU 15-445 Database Systems (Andy Pavlo, YouTube)</strong>: the lectures on <em>Buffer Pools</em>, <em>Storage</em> and <em>Logging/Recovery</em> for the persistence part. Optional.</li>
+<li>Free Maven live-coding session <em>"Build a vector database from scratch"</em> (Doug Turnbull &amp; John Berryman) if you prefer watching someone build.</li>
+</ol>
+
+</div></details>
+<details class="sec" id="vector-db-s7"><summary><span class="n">8</span><span class="h">Metrics / resume line</span></summary><div class="sb">
+<blockquote>
+<p>"C++ vector database (HNSW + IVF-PQ, NEON-SIMD kernels, WAL persistence, filtered search, Python bindings). On SIFT1M: <strong>recall@10 = 0.95 at X k QPS</strong> (within Y% of hnswlib). IVF-PQ compresses 512 B → 16 B/vector at recall@10 = Z."</p>
+</blockquote></div></details></div></section>
+<section class="view" id="v-neural-accelerator" hidden><div class="band phead"><a class="back" href="#home">← All tracks</a><h2 class="pt">Neural Accelerator (one piece of an NPU)</h2><div class="lead"><blockquote>
+<p>Goal: design, verify and synthesize <strong>one meaningful block</strong> of a neural network accelerator in SystemVerilog, and run a real (small) quantized model through it, checked against PyTorch bit-exactly. §0 lists the options. Pick one when you get here. §1–6 are the theory common to all of them.</p>
+<p>Your edge: you've already <em>felt</em> accelerator constraints. On your M2, GQA was slower because of non-contiguous memory and <code>ffn_dim = 1472</code> not being a multiple of 128, so matmuls tiled badly on Apple's matrix units. That <em>is</em> accelerator design (tile sizes, data layout, memory traffic), seen from the software side. Lead with that story in interviews.</p>
+</blockquote>
+
+</div><div class="tools"><input type="search" class="q" placeholder="Search this track" aria-label="Search Neural accelerator"><button type="button" class="ex">Expand all</button></div></div><div class="band secs"><details class="sec" id="neural-accelerator-s0"><summary><span class="n">1</span><span class="h">Options</span></summary><div class="sb">
+<div class="tw"><table class="stack">
+<thead>
+<tr>
+<th>#</th>
+<th>Option</th>
+<th>What you build</th>
+<th>Effort</th>
+<th>Signal / best for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1</strong></td>
+<td><strong>Systolic-array GEMM engine (mini-TPU)</strong> ⭐</td>
+<td>N×N (4×4 → 8×8 → 16×16) <strong>weight-stationary</strong> int8 MAC array with int32 accumulators, input skew/de-skew logic, on-chip weight/activation buffers (BRAM), a small controller that tiles a big matmul. Runs a quantized MNIST MLP end to end.</td>
+<td>2–3 weeks</td>
+<td>The canonical project. Every AI-hardware interviewer knows the TPU. <strong>Most recommended.</strong></td>
+</tr>
+<tr>
+<td><strong>2</strong></td>
+<td><strong>Conv engine for a tiny CNN</strong></td>
+<td>Line buffers + a 3×3 sliding-window MAC engine (+ ReLU + max-pool) streaming an image. Runs a LeNet-style net on MNIST.</td>
+<td>2–3 weeks</td>
+<td>Classic FPGA-vision accelerator. Ties to your YOLO work. Shows streaming dataflow.</td>
+</tr>
+<tr>
+<td><strong>3</strong></td>
+<td><strong>Quantized MLP inference core (end-to-end, small)</strong></td>
+<td>A single MAC/vector unit + FSM sequencing layers + weights in ROM: a complete "draw a digit → FPGA predicts" pipeline (you already built the Python version!).</td>
+<td>1–1.5 weeks</td>
+<td>Fastest to <em>finish</em>. Less impressive alone. Good if time is short.</td>
+</tr>
+<tr>
+<td><strong>4</strong></td>
+<td><strong>Transformer pieces: softmax / LayerNorm / attention unit</strong></td>
+<td>Hardware softmax (max-subtract, exp via LUT/piecewise-linear, sum, reciprocal) or a fixed-point LayerNorm/RMSNorm, or the QKᵀ → softmax → ·V pipeline for small heads</td>
+<td>2 weeks</td>
+<td><strong>Most aligned with your LLM work. Rare among students.</strong> Non-linear ops are a known hard problem (that's why FlashAttention exists).</td>
+</tr>
+<tr>
+<td><strong>5</strong></td>
+<td><strong>Mini-TPU with an ISA + driver</strong> (Option 1 extended)</td>
+<td>Add an instruction set (LOAD_W, LOAD_A, MATMUL, ACT, STORE), a host interface, and a Python driver/compiler emitting instructions → combines with <code>compiler/</code> option D</td>
+<td>3–4 weeks</td>
+<td>Full-stack NPU story: compiler → ISA → RTL. Biggest payoff, biggest scope.</td>
+</tr>
+<tr>
+<td><strong>6</strong></td>
+<td><strong>RISC-V core + custom MAC/SIMD instruction</strong></td>
+<td>Take a small RISC-V core (e.g. PicoRV32 or your own), add a custom-0 opcode for a dot-product, and compare cycle counts on a matmul in C</td>
+<td>2–3 weeks</td>
+<td>Good for CPU/architecture roles. Tests ISA extension understanding.</td>
+</tr>
+<tr>
+<td><strong>7</strong></td>
+<td><strong>HLS-based accelerator (Vitis HLS / hls4ml)</strong></td>
+<td>Write the kernel in C++ with pragmas (pipeline, unroll, array_partition), or compile a Keras/PyTorch model via hls4ml</td>
+<td>1–2 weeks</td>
+<td>Fast results. Less "I understand RTL". Fine as a comparison baseline against hand-written RTL.</td>
+</tr>
+</tbody>
+</table></div>
+<p>My suggestion: <strong>1</strong> (then extend toward <strong>5</strong> if the compiler project goes well), or <strong>4</strong> if you want the LLM angle. Tell me which when you get here.</p>
+
+</div></details>
+<details class="sec" id="neural-accelerator-s1"><summary><span class="n">2</span><span class="h">Why accelerators exist: the numbers</span></summary><div class="sb">
+<ul>
+<li>DNN compute is dominated by <strong>matrix multiplies / convolutions</strong> = huge numbers of <strong>multiply-accumulates (MACs)</strong>. Example: a 1024×1024 GEMM = 1.07 G MACs.</li>
+<li><strong>Energy is in data movement, not math.</strong> Approximate energy (45 nm, Horowitz ISSCC 2014): 8-bit add ~0.03 pJ, 32-bit float mult ~3.7 pJ, 32-bit SRAM read (small) ~5 pJ, <strong>DRAM read ~640 pJ</strong>. A DRAM access costs ~100–1000× a MAC. → <strong>Maximize reuse of each fetched value on-chip.</strong> Every accelerator design decision follows from this.</li>
+<li>CPUs spend most energy on instruction fetch/decode/control. GPUs amortize that with SIMT. Accelerators remove it with fixed dataflow + huge MAC arrays + software-managed scratchpads (no caches).</li>
+</ul>
+<h3>Roofline model (know it cold)</h3>
+<ul>
+<li><strong>Arithmetic intensity (AI)</strong> = FLOPs / bytes moved from memory.</li>
+<li>Attainable perf = <strong>min(peak compute, AI × memory bandwidth)</strong>. Below the "ridge point" you're <strong>memory-bound</strong>, above it <strong>compute-bound</strong>.</li>
+<li>GEMM (n×n): FLOPs 2n³, bytes ~3n²·b, so AI ∝ n → compute-bound for big n. GEMV (batch-1 LLM decoding): AI ≈ 1–2 → <strong>memory-bound</strong>. That's why LLM inference is bandwidth-bound and why KV-cache/quantization matter. You know this from MFU work. Now you get the hardware reason.</li>
+</ul>
+
+</div></details>
+<details class="sec" id="neural-accelerator-s2"><summary><span class="n">3</span><span class="h">Number formats &amp; quantization</span></summary><div class="sb">
+<ul>
+<li><strong>Fixed point</strong> Qm.n: an integer with an implied binary point. Multiply Qa.b × Qc.d → Q(a+c).(b+d), then shift and round back. Saturate instead of wrapping on overflow.</li>
+<li><strong>int8 quantization</strong> (affine): <code>real = scale · (q − zero_point)</code>. Per-tensor vs <strong>per-channel</strong> scales. Symmetric (zp = 0, simpler hardware) vs asymmetric.</li>
+<li>int8 × int8 → int16 product. Summing K of them needs <strong>int32 accumulators</strong> (log2(K) extra bits of headroom).</li>
+<li><strong>Requantization:</strong> int32 accumulator → int8 output via <code>(acc · M) &gt;&gt; shift</code> where M is a fixed-point multiplier approximating <code>s_in·s_w/s_out</code> (Jacob et al. 2018). Implement this exactly, or your hardware won't match PyTorch.</li>
+<li>Post-training quantization (PTQ) vs quantization-aware training (QAT). Newer formats to know: bf16, fp8 (E4M3/E5M2), int4, MX formats (microscaling, shared exponents per block).</li>
+<li><strong>Bit-exact verification:</strong> write the quantized inference in NumPy with <em>integer</em> ops. That's your golden model. RTL must match it bit for bit.</li>
+</ul>
+
+</div></details>
+<details class="sec" id="neural-accelerator-s3"><summary><span class="n">4</span><span class="h">Dataflows and the systolic array</span></summary><div class="sb">
+<h3>Loop nest view</h3>
+<p>GEMM <code>C[M][N] += A[M][K] · B[K][N]</code> is 3 nested loops. <strong>Dataflow = which loop is unrolled spatially across PEs and which data stays put.</strong></p>
+<div class="tw"><table class="stack">
+<thead>
+<tr>
+<th>Dataflow</th>
+<th>What stays in each PE</th>
+<th>Moves</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Weight-stationary (WS)</strong></td>
+<td>one weight</td>
+<td>activations flow across, partial sums flow down</td>
+<td>Google TPU v1</td>
+</tr>
+<tr>
+<td><strong>Output-stationary (OS)</strong></td>
+<td>one partial sum (accumulates in place)</td>
+<td>weights and activations both flow through</td>
+<td>many FPGA designs, ShiDianNao</td>
+</tr>
+<tr>
+<td><strong>Input-stationary (IS)</strong></td>
+<td>one activation</td>
+<td>weights flow, psums flow</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>Row-stationary (RS)</strong></td>
+<td>a row of the conv computation</td>
+<td>maximizes reuse of all three for convs</td>
+<td>MIT Eyeriss</td>
+</tr>
+<tr>
+<td>No local reuse</td>
+<td>nothing</td>
+<td>everything from the global buffer</td>
+<td>DianNao</td>
+</tr>
+</tbody>
+</table></div>
+<h3>Systolic array (WS, how the TPU's MXU works)</h3>
+<ul>
+<li>A 2-D grid of <strong>Processing Elements (PEs)</strong>. Each PE = a register holding a weight + a multiplier + an adder + registers to pass data to its neighbours. <strong>Only nearest-neighbour wires</strong>, so it scales to high clock rates. That's the whole point (H.T. Kung, 1978–82).</li>
+<li>Preload weights W[k][n] into the PE grid. Activation rows enter from the left, <strong>skewed</strong> in time (row i delayed by i cycles) so the right values meet. Each PE computes <code>psum_out = psum_in + a · w</code>, passes <code>a</code> right and <code>psum_out</code> down. Results exit the bottom, <strong>de-skewed</strong>.</li>
+<li>Timing: for an N×N array streaming M rows, latency ≈ M + 2N cycles. Throughput = N² MACs/cycle once full. Utilization drops for small M or when the matrix doesn't divide by N (<strong>the M2 <code>ffn_dim</code> lesson exactly</strong>).</li>
+<li><strong>Tiling:</strong> big matmuls are split into N×N weight tiles. The controller loops over tiles, accumulating partial results in an accumulator buffer. Double-buffer the weights (load the next tile while computing the current one) to hide load latency.</li>
+<li>Conv → GEMM via <strong>im2col</strong> (unfold patches into columns), or do the conv natively with line buffers (option 2).</li>
+</ul>
+<h3>Memory hierarchy of an accelerator</h3>
+<p>DRAM → (DMA) → <strong>global buffer / scratchpad SRAM (FPGA BRAM)</strong> → PE-local registers. <strong>Software-managed</strong> (explicit loads), not caches. <strong>Double buffering / ping-pong buffers</strong> overlap transfer with compute. Bandwidth to the array: N activations + N psums per cycle, so BRAM width and partitioning matter.</p>
+<h3>Other efficiency tricks (know for interviews)</h3>
+<ul>
+<li><strong>Sparsity:</strong> skip zero weights/activations. Structured 2:4 sparsity (NVIDIA Ampere) vs unstructured (needs index metadata, irregular).</li>
+<li><strong>Winograd</strong> / FFT convolution: fewer multiplies for 3×3 convs.</li>
+<li><strong>Operator fusion:</strong> keep intermediates on-chip (matmul → bias → ReLU → requant in one pass).</li>
+<li>Non-linear functions in hardware: LUT + linear interpolation, piecewise-linear approximations, <strong>online softmax</strong> (running max + running sum, the FlashAttention trick, which maps nicely to streaming hardware).</li>
+</ul>
+
+</div></details>
+<details class="sec" id="neural-accelerator-s4"><summary><span class="n">5</span><span class="h">Real-world architectures to know (1–2 sentences each in an interview)</span></summary><div class="sb">
+<ul>
+<li><strong>Google TPU v1:</strong> 256×256 int8 weight-stationary systolic array (65,536 MACs), 24 MiB unified buffer, CISC-like instructions from the host, ~92 TOPS. Later TPUs: bf16, HBM, inter-chip interconnect, training.</li>
+<li><strong>NVIDIA Tensor Cores:</strong> small matrix-multiply-accumulate units inside each SM (e.g. 4×4×4 in Volta, larger in later gens), fed by warps. Programmed via WMMA/MMA, CUTLASS, Triton.</li>
+<li><strong>Apple Neural Engine / AMX:</strong> your M2 has both (ANE via Core ML, AMX matrix coprocessor used by Accelerate/BLAS). Your tiling observations came from these.</li>
+<li><strong>MIT Eyeriss:</strong> row-stationary dataflow, energy-focused analysis.</li>
+<li><strong>Berkeley Gemmini:</strong> an open-source systolic-array generator (Chisel) attached to a RISC-V core, with a full software stack. A great reference design.</li>
+<li><strong>NVDLA:</strong> NVIDIA's open-source inference accelerator RTL.</li>
+<li>Recent: Groq LPU (deterministic, compiler-scheduled, SRAM-only), Cerebras (wafer-scale), Tenstorrent (RISC-V + Tensix cores, open-source software stack), Etched (transformer ASIC), and on-device NPUs (Qualcomm Hexagon, Apple ANE).</li>
+</ul>
+
+</div></details>
+<details class="sec" id="neural-accelerator-s5"><summary><span class="n">6</span><span class="h">Implementation &amp; verification plan (for option 1; others are similar)</span></summary><div class="sb">
+<ol>
+<li><strong>Golden model:</strong> train an MNIST MLP (784-128-10) in PyTorch → quantize to int8 → write a <strong>pure-integer NumPy</strong> inference that matches PyTorch's quantized output. Export weights to <code>.mem</code>/hex files.</li>
+<li><strong>PE module:</strong> registered MAC, parameterized widths. Unit test it with cocotb.</li>
+<li><strong>N×N array</strong> with generate loops, input skew shift registers, output de-skew. Test random int8 matrices vs NumPy, including edge values (−128 × −128!) and accumulation overflow headroom.</li>
+<li><strong>Buffers + controller FSM:</strong> weight-load phase, stream phase, drain phase. Tile a 784×128 layer onto an 8×8 or 16×16 array. Accumulator buffer for partial sums across K tiles.</li>
+<li><strong>Post-processing unit:</strong> bias add + requantize + ReLU.</li>
+<li>End to end: run 10,000 MNIST test images in simulation (Verilator is fast enough), report accuracy == golden model accuracy and <strong>bit-exact</strong> agreement.</li>
+<li><strong>Synthesize</strong> (Vivado for Artix-7 / Zynq, or Yosys + nextpnr for an ECP5): report Fmax, LUTs, FFs, <strong>DSP48 usage</strong> (one int8 MAC can pack 2 per DSP slice, a nice optimization), BRAM. Compute <strong>peak GOPS = 2 · N² · Fmax</strong> and achieved utilization.</li>
+<li>Stretch: on a Zynq / PYNQ board, a Python notebook on the ARM core sends images to your accelerator via AXI DMA. A live "draw a digit" demo reuses your old project's UI!</li>
+</ol>
+<p>Tools: same as <code>itch_fpga/</code> (Verilator/Icarus + <strong>cocotb</strong> + GTKWave/Surfer + Vivado/Yosys). Do the <strong>Verilog ramp in itch_fpga/theory.md §2 first</strong> (it's shared).</p>
+
+</div></details>
+<details class="sec" id="neural-accelerator-s6"><summary><span class="n">7</span><span class="h">Interview questions</span></summary><div class="sb">
+<ol>
+<li>Why are DNN accelerators faster and more energy-efficient than CPUs/GPUs for inference?</li>
+<li>Draw a systolic array for a 3×3 matmul and walk through the cycles. Why skew the inputs?</li>
+<li>Weight- vs output- vs row-stationary: what does each minimize? Which suits batch-1 LLM decoding?</li>
+<li>Explain the roofline model. Is LLM decoding compute- or memory-bound? Why? What helps? (Batching, quantization, KV-cache compression, speculative decoding.)</li>
+<li>What's arithmetic intensity of GEMM vs GEMV?</li>
+<li>How does int8 quantization work? Why int32 accumulators? What's requantization?</li>
+<li>How do you map a convolution onto a matmul engine? Cost of im2col?</li>
+<li>Your array is 128×128 and the layer is 1472 wide. What's the utilization? (1472 = 11.5 tiles of 128, so the last tile is half-empty and ~96% overall. Now explain your M2 GQA result.)</li>
+<li>How would you implement softmax / GELU / LayerNorm in hardware?</li>
+<li>What is double buffering and why does it matter?</li>
+<li>How do you exploit sparsity? Why is unstructured sparsity hard in hardware?</li>
+<li>FPGA specifics: what's a DSP slice? How many int8 MACs per DSP48E2? BRAM ports and widths?</li>
+<li>(Design) Design an accelerator for a transformer's attention with a 4 MB on-chip SRAM budget. How do you tile? (→ FlashAttention-style tiling + online softmax.)</li>
+</ol>
+<p><strong>AI-era probes:</strong> "How did you know it computes the right thing?" (Bit-exact vs an integer NumPy golden model on 10k images.) "What limits your Fmax / utilization?" (Show the timing report and utilization math.) "How would a compiler target your hardware?" (→ <code>compiler/</code> option D.)</p>
+
+</div></details>
+<details class="sec" id="neural-accelerator-s7"><summary><span class="n">8</span><span class="h">Resources (priority order)</span></summary><div class="sb">
+<ol>
+<li><strong>Sze, Chen, Yang, Emer, "Efficient Processing of Deep Neural Networks: A Tutorial and Survey"</strong> (Proc. IEEE 2017, arXiv 1703.09039). Read §IV (hardware for DNN processing), §V (<strong>dataflows: WS/OS/NLR/RS</strong>, the clearest taxonomy) and §VII (reduced precision). Expanded into the book <em>Efficient Processing of Deep Neural Networks</em> (Morgan &amp; Claypool, 2020): Ch. 3 (key metrics), Ch. 4 (kernel computation, im2col, tiling), Ch. 5 (dataflows), Ch. 7 (reduced precision).</li>
+<li><strong>Jouppi et al., "In-Datacenter Performance Analysis of a Tensor Processing Unit" (ISCA 2017)</strong>. TPU v1: read §2 (architecture, the <strong>systolic MXU figure</strong>) and the roofline section. ~1 hour.</li>
+<li><strong>MIT 6.5930/1 "Hardware Architecture for Deep Learning" (Sze &amp; Emer)</strong>. Free lecture slides on the course website. Lectures on dataflows, the loop-nest notation and quantization. Pairs with #1.</li>
+<li><strong>MIT 6.5940 "TinyML and Efficient Deep Learning Computing" (Song Han, YouTube + efficientml.ai)</strong>. Lectures 5–6 (<strong>quantization</strong>). Lecture 3–4 (pruning/sparsity) is optional.</li>
+<li><strong>Jacob et al., "Quantization and Training of Neural Networks for Efficient Integer-Arithmetic-Only Inference" (CVPR 2018)</strong>. §2 (quantization scheme) and §2.2 (<strong>integer-only requantization with fixed-point multiplier</strong>). This is exactly what your hardware's post-processing unit implements.</li>
+<li><strong>Horace He, "Making Deep Learning Go Brrrr From First Principles"</strong>. Compute/memory/overhead-bound framing. You'll enjoy it given your MFU work.</li>
+<li><strong>Reference open-source designs (read, then build your own):</strong>
+   - <code>tiny-tpu-v2/tiny-tpu</code>: a minimal TPU re-imagined from TPU v1/v2 (systolic array + vector unit + an 88-bit ISA; a 2×2 matmul + ReLU design with docs). Good for option 5.
+   - <code>deaneeth/tiny-tpu</code>: 4×4 <strong>weight-stationary</strong> int8 systolic array in SystemVerilog, <strong>tested with cocotb</strong> (MIT license). Closest to option 1.
+   - <code>Alanma23/tinytinyTPU</code>: 2×2 array with Verilator + cocotb flow and a Basys3 deploy path via Yosys/nextpnr.
+   - <strong>Berkeley Gemmini (github.com/ucb-bar/gemmini)</strong>: production-grade research generator. Read the README's architecture section for the scratchpad/accumulator/controller design.</li>
+<li><strong>HDLBits + Cummings papers + cocotb docs</strong> (same as itch_fpga §7) for the RTL skills.</li>
+<li><strong>Kung, "Why Systolic Architectures?" (IEEE Computer, 1982)</strong>. The original, short and very readable.</li>
+<li>For option 4: <strong>Milakov &amp; Gimelshein, "Online normalizer calculation for softmax" (2018)</strong> and the <strong>FlashAttention</strong> paper §3.1 (tiling + online softmax).</li>
+<li>For option 7: <strong>hls4ml docs + tutorial notebooks</strong> (fastmachinelearning.org/hls4ml) and the AMD/Xilinx Vitis HLS user guide (pragma sections).
+Communities: r/FPGA, r/computerarchitecture, r/hardware. The tiny-tpu projects have community Discords.</li>
+</ol>
+
+</div></details>
+<details class="sec" id="neural-accelerator-s8"><summary><span class="n">9</span><span class="h">Metrics / resume line</span></summary><div class="sb">
+<blockquote>
+<p>"Designed a parameterized N×N weight-stationary int8 systolic-array accelerator in SystemVerilog (+ tiling controller, double-buffered BRAM, fixed-point requantization). Runs a quantized MNIST MLP <strong>bit-exact vs a PyTorch/NumPy golden model (97.x% acc.)</strong>. <strong>X GOPS peak at Y MHz</strong> on Artix-7, using Z DSPs. Verified with cocotb."</p>
+</blockquote></div></details></div></section>
+<section class="view" id="v-compiler" hidden><div class="band phead"><a class="back" href="#home">← All tracks</a><h2 class="pt">Your Own Compiler</h2><div class="lead"><blockquote>
+<p>Goal: a compiler (or interpreter + compiler) for a small language, built end to end. Pick the flavour in §0. The theory in §1–6 is shared by all options.</p>
+</blockquote>
+
+</div><div class="tools"><input type="search" class="q" placeholder="Search this track" aria-label="Search Compiler"><button type="button" class="ex">Expand all</button></div></div><div class="band secs"><details class="sec" id="compiler-s0"><summary><span class="n">1</span><span class="h">Options (pick one when you start)</span></summary><div class="sb">
+<div class="tw"><table class="stack">
+<thead>
+<tr>
+<th>Option</th>
+<th>What you build</th>
+<th>Language</th>
+<th>Effort (v1)</th>
+<th>Best for</th>
+<th>Main resource</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>A. Bytecode interpreter</strong> for your own dynamic language</td>
+<td>Lexer → Pratt parser → compile to bytecode → stack VM (+ closures, GC)</td>
+<td>C</td>
+<td>3–4 weeks for the full clox</td>
+<td>Learning everything gently. "VM/interpreter" story.</td>
+<td><em>Crafting Interpreters</em>, Part III</td>
+</tr>
+<tr>
+<td><strong>B. C-subset → real assembly</strong> (ARM64 on your M2, or x86-64)</td>
+<td>Lexer → recursive-descent parser → AST → type check → (TACKY/IR) → assembly → <code>as</code>/<code>ld</code> → native binary</td>
+<td>C, C++, Rust or Python</td>
+<td>2–4 weeks for ints, functions, pointers, arrays, structs</td>
+<td><strong>"Real compiler" credibility.</strong> Systems/compiler roles.</td>
+<td>Nora Sandler, <em>Writing a C Compiler</em>; chibicc; acwj</td>
+</tr>
+<tr>
+<td><strong>C. LLVM frontend</strong> for a toy language</td>
+<td>Lexer/parser/AST → emit <strong>LLVM IR</strong> → LLVM does the optimization and codegen → JIT or native</td>
+<td>C++</td>
+<td>1–2 weeks</td>
+<td>Fast route to an optimizing compiler. LLVM on the resume.</td>
+<td>LLVM <em>Kaleidoscope</em> tutorial</td>
+</tr>
+<tr>
+<td><strong>D. ML / tensor compiler</strong> (most aligned with your AI profile)</td>
+<td>A tiny graph IR for tensor ops (from a PyTorch-like DSL or a traced micrograd/tinygrad model) → passes: shape inference, constant folding, <strong>operator fusion</strong>, <strong>loop tiling</strong> → codegen to C/Metal/NEON, <em>or to your neural accelerator's instruction stream</em></td>
+<td>Python (+ C codegen)</td>
+<td>2–3 weeks</td>
+<td>ML-infra / AI-compiler roles (NVIDIA, Modular, AMD, Qualcomm, Google XLA, OpenAI Triton team). <strong>Combines with the accelerator project.</strong></td>
+<td>tinygrad source, MLIR Toy tutorial, Triton paper, TVM paper</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>My recommendation:</strong> <strong>B</strong> if you want the classic, deep "I wrote a compiler that emits machine code" experience (fun, hard, and the theory transfers everywhere). <strong>D</strong> if you want it to compound with your AI/hardware story (compiler → your systolic array = a full-stack NPU project). You could do a small B-style frontend and reuse it in D later.</p>
+<p>Mac note for B: Sandler's book targets <strong>x86-64</strong> (System V ABI). On an M2 you can assemble x86-64 and run it via <strong>Rosetta 2</strong> (<code>arch -x86_64</code>), or target <strong>ARM64 (AArch64)</strong> natively. Fewer instructions, more registers, a cleaner ABI, but you translate the book's codegen chapters yourself. Note: macOS prefixes C symbols with <code>_</code>.</p>
+
+</div></details>
+<details class="sec" id="compiler-s1"><summary><span class="n">2</span><span class="h">Big picture: the pipeline</span></summary><div class="sb">
+<div class="code"><button class="cp" type="button">Copy</button><pre><code>source text
+  → LEXER (tokens)
+  → PARSER (AST)
+  → SEMANTIC ANALYSIS (name resolution, scopes, types)  → annotated AST
+  → IR GENERATION (three-address code / SSA, control-flow graph)
+  → OPTIMIZATION PASSES (on IR)
+  → INSTRUCTION SELECTION → REGISTER ALLOCATION → INSTRUCTION SCHEDULING
+  → assembly → assembler → linker → executable
+</code></pre></div>
+<p>Front end = language-specific. Back end = machine-specific. <strong>IR</strong> decouples them (that's LLVM's whole idea: N languages × M targets → N + M work).</p>
+<p>Compiler vs interpreter vs JIT: compile ahead of time to machine code / walk the AST or bytecode at runtime / compile hot code at runtime (V8, PyPy, LuaJIT, the JVM).</p>
+
+</div></details>
+<details class="sec" id="compiler-s2"><summary><span class="n">3</span><span class="h">Lexing (scanning)</span></summary><div class="sb">
+<ul>
+<li>Turn characters into <strong>tokens</strong>: <code>KEYWORD(int)</code>, <code>IDENT(x)</code>, <code>INT_LIT(42)</code>, <code>PLUS</code>, <code>LPAREN</code>, …. Drop whitespace and comments, track line/column for error messages.</li>
+<li>Theory: tokens are <strong>regular languages</strong> → regular expressions → <strong>NFA (Thompson's construction) → DFA (subset construction) → minimize</strong>. Tools like flex automate this. Hand-written lexers are just a loop with a <code>switch</code> on the current char: <strong>maximal munch</strong> (<code>&gt;=</code> beats <code>&gt;</code> then <code>=</code>), keyword lookup after scanning an identifier.</li>
+<li>Interview: "Why can't regex parse nested parentheses?" (Regular languages can't count. You need a context-free grammar / pushdown automaton.)</li>
+</ul>
+</div></details>
+<details class="sec" id="compiler-s3"><summary><span class="n">4</span><span class="h">Parsing</span></summary><div class="sb">
+<ul>
+<li><strong>Context-free grammars (CFG)</strong> in BNF/EBNF. Terminals, nonterminals, productions, derivations, parse trees vs <strong>AST</strong> (the AST drops the syntax noise).</li>
+<li><strong>Ambiguity:</strong> <code>1 - 2 - 3</code> and <code>1 + 2 * 3</code> → fix with <strong>precedence &amp; associativity</strong> layers in the grammar.</li>
+<li><strong>Top-down (LL):</strong> <strong>recursive descent</strong>: one function per nonterminal. Needs no <strong>left recursion</strong> (rewrite <code>expr → expr + term</code> into a loop). LL(1) = decide with 1 lookahead token, using FIRST/FOLLOW sets.</li>
+<li><strong>Precedence climbing / Pratt parsing:</strong> the elegant way to parse expressions. Each token has a binding power, and a loop handles infix operators. <em>Learn this.</em> It's 50 lines and handles all of precedence, associativity, prefix and postfix.</li>
+<li><strong>Bottom-up (LR, LALR, SLR):</strong> shift-reduce with a parse table, used by yacc/bison. Know the concepts: shift/reduce and reduce/reduce <strong>conflicts</strong>, the dangling-else problem. You won't hand-write one.</li>
+<li>Real compilers (GCC, Clang, Go, Rust's rustc) use <strong>hand-written recursive descent</strong> for better error messages.</li>
+<li>Error recovery: <strong>panic mode</strong>, i.e. skip to a synchronizing token (<code>;</code>, <code>}</code>) and continue to report more errors.</li>
+</ul>
+</div></details>
+<details class="sec" id="compiler-s4"><summary><span class="n">5</span><span class="h">Semantic analysis</span></summary><div class="sb">
+<ul>
+<li><strong>Symbol tables &amp; scopes:</strong> a stack of hash maps. Lexical/static scoping, shadowing, name resolution, use-before-declare.</li>
+<li><strong>Type checking:</strong> compute each expression's type bottom-up and check the rules (can't add a pointer to a pointer). Implicit conversions (C's "usual arithmetic conversions"), lvalues vs rvalues.</li>
+<li><strong>Type inference</strong> (know it): Hindley–Milner / unification (ML, Haskell, Rust locally).</li>
+<li>Output: an AST annotated with types and resolved symbols (or "variable #7, stack offset −24").</li>
+</ul>
+</div></details>
+<details class="sec" id="compiler-s5"><summary><span class="n">6</span><span class="h">Intermediate representation and optimization</span></summary><div class="sb">
+<ul>
+<li><strong>Three-address code (TAC):</strong> <code>t1 = a + b</code>, one operation per instruction, explicit temporaries. Sandler's book calls its IR "TACKY".</li>
+<li><strong>Basic blocks</strong> (straight-line code, one entry, one exit) and the <strong>control-flow graph (CFG)</strong>.</li>
+<li><strong>SSA (Static Single Assignment):</strong> every variable is assigned exactly once. <strong>φ (phi) functions</strong> merge values at join points. It makes most optimizations simple. Construct it via <strong>dominators / dominance frontiers</strong> (Cytron et al.). LLVM IR is SSA.</li>
+<li><strong>Dataflow analysis:</strong> a framework (lattice + transfer function + fixpoint iteration). Instances: <strong>liveness</strong> (backward), <strong>reaching definitions</strong> (forward), available expressions.</li>
+<li>Classic optimizations (know what each does and give an example):
+  | Pass | Example |
+  |---|---|
+  | Constant folding / propagation | <code>x = 2*3; y = x+1</code> → <code>y = 7</code> |
+  | Dead code elimination | remove unused results, unreachable blocks |
+  | Copy propagation | <code>y = x; z = y+1</code> → <code>z = x+1</code> |
+  | Common subexpression elimination | compute <code>a*b</code> once |
+  | Loop-invariant code motion | hoist <code>n*4</code> out of the loop |
+  | Strength reduction | <code>i*4</code> in a loop → add 4 each iteration |
+  | Inlining | replace a call with the body (enables everything else) |
+  | Loop unrolling / vectorization | fewer branches, SIMD |
+  | Tail-call optimization | recursion → loop |</li>
+</ul>
+</div></details>
+<details class="sec" id="compiler-s6"><summary><span class="n">7</span><span class="h">Back end</span></summary><div class="sb">
+<ul>
+<li><strong>Instruction selection:</strong> map IR ops to machine instructions (tree pattern matching, or a simple 1:1 template expansion in a teaching compiler).</li>
+<li><strong>Register allocation:</strong> finite registers. Values that don't fit are <strong>spilled</strong> to the stack.<ul>
+<li><strong>Graph coloring</strong> (Chaitin/Briggs): build an <strong>interference graph</strong> (variables live at the same time can't share a register) → K-color it (NP-hard, so use heuristics) → spill when you can't. Plus coalescing to remove moves.</li>
+<li><strong>Linear scan:</strong> faster and simpler, used in JITs.</li>
+</ul>
+</li>
+<li><strong>Calling conventions / ABI:</strong> which registers hold args and the return value (x86-64 SysV: <code>rdi, rsi, rdx, rcx, r8, r9</code>, return in <code>rax</code>. AArch64: <code>x0–x7</code>, return in <code>x0</code>), caller- vs callee-saved registers, <strong>stack frames</strong> (frame pointer, return address, locals, alignment to 16 bytes).</li>
+<li>Then <strong>assembler</strong> (text → object file) and <strong>linker</strong> (resolve symbols, relocations, link libc). Know ELF/Mach-O basics: sections <code>.text</code>, <code>.data</code>, <code>.bss</code>, symbol table.</li>
+<li>Runtime topics for a dynamic language (option A): stack VM vs register VM, <strong>garbage collection</strong> (mark-sweep, copying, generational, reference counting + cycles), closures and upvalues, dynamic dispatch, NaN-boxing.</li>
+</ul>
+</div></details>
+<details class="sec" id="compiler-s7"><summary><span class="n">8</span><span class="h">ML compiler extras (option D)</span></summary><div class="sb">
+<ul>
+<li><strong>Computational graph IR:</strong> nodes = tensor ops (matmul, add, relu, softmax), edges = tensors with shapes/dtypes.</li>
+<li>Passes: <strong>shape inference</strong>, constant folding, <strong>operator fusion</strong> (matmul + bias + relu → one kernel, which saves memory round trips; the #1 win, see Horace He's "brrr" post), layout transformation (NCHW ↔ NHWC), <strong>quantization</strong>.</li>
+<li><strong>Loop-level IR:</strong> an op becomes a loop nest, then you <strong>tile</strong> for cache/SRAM, reorder, vectorize and parallelize. Halide's idea is <strong>separating the algorithm from the schedule</strong>, and TVM adopted it.</li>
+<li><strong>Polyhedral model</strong> (know the name): loop nests as integer polyhedra for legal reordering.</li>
+<li><strong>MLIR:</strong> multi-level IR with <strong>dialects</strong> (linalg, affine, scf, gpu…) progressively <strong>lowered</strong>. Triton = Python-level block programming → MLIR → PTX.</li>
+<li>Lowering to <em>your</em> accelerator: tile a matmul to the systolic array size (e.g. 8×8), schedule weight loads/activation streams, and emit an instruction stream. That's what Google's XLA does for TPUs, in miniature.</li>
+</ul>
+
+</div></details>
+<details class="sec" id="compiler-s8"><summary><span class="n">9</span><span class="h">Interview questions</span></summary><div class="sb">
+<ol>
+<li>Walk through the phases of a compiler. What does each output?</li>
+<li>Lexer vs parser: why separate? Why can't regex handle nested parens?</li>
+<li>What's left recursion and why is it a problem for recursive descent? How do you remove it?</li>
+<li>How do you handle operator precedence? (Grammar layering or Pratt parsing.)</li>
+<li>AST vs parse tree.</li>
+<li>What is SSA and why do compilers use it? What's a φ node?</li>
+<li>Explain liveness analysis. How does it feed register allocation?</li>
+<li>Register allocation as graph coloring: what happens when you run out of registers?</li>
+<li>Name 5 optimizations and an example of each. Which are only valid under certain conditions? (E.g. reordering floating-point ops breaks associativity. Aliasing blocks reordering memory ops, which is why <code>restrict</code> exists.)</li>
+<li>What's a calling convention? Caller- vs callee-saved?</li>
+<li>Interpreter vs compiler vs JIT trade-offs. How does V8 or the JVM JIT work at a high level?</li>
+<li>(C/C++ systems interviews) What does <code>volatile</code> do or not do? What is undefined behaviour and why do compilers exploit it?</li>
+<li>(ML-compiler interviews) Why fuse operators? What's arithmetic intensity? How does TVM or Triton generate fast kernels? What's tiling?</li>
+</ol>
+<p><strong>AI-era probe:</strong> "LLMs can write code now. Why do compilers matter?" Good answer: every AI chip needs a compiler stack, and ML compilers (XLA, Triton, TVM, MLIR, Mojo/MAX, tinygrad) are among the hottest hiring areas. Plus: "How did you test your compiler?" Answer: a test suite of programs with expected outputs, run through your compiler vs <code>gcc</code>/<code>clang</code> (differential testing), and fuzzing with Csmith for C.</p>
+
+</div></details>
+<details class="sec" id="compiler-s9"><summary><span class="n">10</span><span class="h">Resources (priority order)</span></summary><div class="sb">
+<p><strong>Core</strong></p>
+<ol>
+<li><strong>Crafting Interpreters (Robert Nystrom, free at craftinginterpreters.com)</strong>. The community's #1 beginner rec (r/ProgrammingLanguages, r/Compilers, HN). Read <strong>Ch. 4 Scanning, Ch. 5 Representing Code, Ch. 6 Parsing Expressions</strong> for any option. For option A, do all of <strong>Part III (clox), Ch. 14–30</strong>. Ch. 17 "Compiling Expressions" is the best Pratt parser explanation anywhere.</li>
+<li><strong>Nora Sandler, <em>Writing a C Compiler</em> (No Starch Press, 2024)</strong>. Option B. Part I (Ch. 1–10: return 2 → unary → binary → logical/relational → locals → if → compound statements → loops → functions → file scope) gives you a working compiler. Part II adds types (long, unsigned, double, pointers, arrays, structs). Part III is optimizations (constant folding, unreachable/dead-code elimination, copy propagation) + <strong>register allocation (graph coloring)</strong>. Test suite on GitHub (<code>nlsandler/writing-a-c-compiler-tests</code>). Free precursor: her blog series "Writing a C Compiler" (norasandler.com).</li>
+<li><strong>chibicc (Rui Ueyama, github.com/rui314/chibicc)</strong>. A small C11 compiler that self-hosts, built in <strong>~300 tiny incremental commits</strong>. Read the commit history in order. It's a tutorial in itself.</li>
+<li><strong>acwj, "A Compiler Writing Journey" (DoctorWkt, GitHub)</strong>. 60+ parts, from calculator to self-compiling C-subset compiler, with a write-up per step.</li>
+<li><strong>LLVM "My First Language Frontend with LLVM" (Kaleidoscope) tutorial (llvm.org/docs/tutorial)</strong>. Option C, Ch. 1–7.</li>
+</ol>
+<p><strong>Theory depth (read selectively)</strong></p>
+<ol start="6">
+<li><strong>Cornell CS 6120 "Advanced Compilers", Adrian Sampson (free self-guided course online, with videos)</strong>. Lessons on <strong>IR/Bril, local optimization (DCE, LVN), dataflow, global analysis/dominators, SSA, LLVM</strong>. Best free resource for the "middle end", and very practical.</li>
+<li><strong>Cooper &amp; Torczon, <em>Engineering a Compiler</em> (3rd ed.)</strong>. Ch. 5 (IR), 8–9 (optimization, dataflow, SSA), 11 (instruction selection), 13 (register allocation). More readable than the Dragon Book.</li>
+<li><strong>Aho, Lam, Sethi, Ullman, the "Dragon Book"</strong>. Ch. 3 (lexing: NFA/DFA) and Ch. 4 (LL/LR parsing) are definitive. Use it as a reference only.</li>
+<li><strong>Pratt parsing posts:</strong> Bob Nystrom, "Pratt Parsers: Expression Parsing Made Easy"; Alex Kladov (matklad), "Simple but Powerful Pratt Parsing".</li>
+</ol>
+<p><strong>ML compiler (option D)</strong></p>
+<ol start="10">
+<li><strong>tinygrad source (github.com/tinygrad/tinygrad)</strong>: a real, small ML compiler (lazy graph → scheduler → kernel fusion → codegen to Metal/CUDA/C). It runs on your M2 via Metal.</li>
+<li><strong>MLIR "Toy" tutorial (mlir.llvm.org/docs/Tutorials/Toy)</strong>, Ch. 1–6: a language → dialect → shape inference → lowering to affine loops → LLVM.</li>
+<li><strong>Horace He, "Making Deep Learning Go Brrrr From First Principles"</strong> (blog). Compute- vs memory- vs overhead-bound, and why fusion matters.</li>
+<li>Papers (skim the overviews): <strong>TVM</strong> (Chen et al., OSDI 2018), <strong>Triton</strong> (Tillet et al., MAPL 2019), <strong>Halide</strong> (Ragan-Kelley et al., PLDI 2013).</li>
+</ol>
+<p>Communities: r/Compilers, r/ProgrammingLanguages (great sidebar resource list), the PLTD / r/ProgrammingLanguages Discord.</p>
+
+</div></details>
+<details class="sec" id="compiler-s10"><summary><span class="n">11</span><span class="h">Metrics / resume line</span></summary><div class="sb">
+<ul>
+<li>B: "Wrote a C-subset compiler in C++ (lexer, recursive-descent parser, type checker, TAC IR, constant folding/DCE/copy propagation, graph-coloring register allocation) emitting AArch64 assembly. Passes N/M tests of the <em>Writing a C Compiler</em> suite and compiles a K-line program."</li>
+<li>D: "Built a tensor compiler (graph IR, shape inference, op fusion, loop tiling) that lowers a PyTorch MLP to C/NEON (X× faster than unfused) and to my FPGA systolic array's ISA."</li>
+</ul></div></details></div></section>
+</main>
+<footer>grind3 · built from the theory.md files in ~/grind3</footer>
+<script>
+{
+ const views=[...document.querySelectorAll('.view')], links=[...document.querySelectorAll('.scroll a')];
+ const show=()=>{
+  const h=location.hash.slice(1); let id='v-home', sec=null;
+  if(h && document.getElementById('v-'+h)) id='v-'+h;
+  else if(h && document.getElementById(h)?.classList.contains('sec')){sec=document.getElementById(h);id=sec.closest('.view').id;}
+  views.forEach(v=>v.hidden=v.id!==id);
+  links.forEach(a=>a.classList.toggle('on','v-'+a.hash.slice(1)===id));
+  const t=document.querySelector('.scroll a.on'); if(t) t.scrollIntoView({block:'nearest',inline:'center'});
+  if(sec){sec.open=true;sec.scrollIntoView();} else window.scrollTo(0,0);
+  try{localStorage.setItem('g3-last',location.hash)}catch(e){}
+ };
+ window.addEventListener('hashchange',show);
+ if(!location.hash){try{const l=localStorage.getItem('g3-last');if(l)history.replaceState(null,'',l)}catch(e){}}
+ show();
+ for(const t of document.querySelectorAll('table.stack')){const hd=[...t.rows[0].cells].map(c=>c.textContent);for(const r of [...t.rows].slice(1))[...r.cells].forEach((c,i)=>c.dataset.l=hd[i]||'');}
+ document.addEventListener('click',e=>{
+  const b=e.target.closest('.cp'); if(b){const txt=b.nextElementSibling.textContent;navigator.clipboard.writeText(txt).then(()=>{b.textContent='Copied';setTimeout(()=>b.textContent='Copy',1200)}).catch(()=>{b.textContent='Select text to copy'});return;}
+  const x=e.target.closest('.ex'); if(x){const v=x.closest('.view');const ds=[...v.querySelectorAll('details.sec')];const open=!ds.every(d=>d.open);ds.forEach(d=>d.open=open);x.textContent=open?'Collapse all':'Expand all';}
+ });
+ for(const q of document.querySelectorAll('.q')){
+  const v=q.closest('.view'), ds=[...v.querySelectorAll('details.sec')];
+  const none=document.createElement('p');none.className='none';none.textContent='No section mentions that.';none.hidden=true;v.querySelector('.secs').append(none);
+  q.addEventListener('input',()=>{const s=q.value.trim().toLowerCase();let n=0;
+   ds.forEach(d=>{const hit=!s||d.textContent.toLowerCase().includes(s);d.hidden=!hit;if(hit)n++;d.open=!!s&&hit;});none.hidden=n>0;});
+ }
+}
+</script>
+</body></html>
